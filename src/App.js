@@ -1,5 +1,6 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
 import Header from './components/Headers/Header';
 import Navbar from './components/Headers/Navbar';
 import { Footer } from './components/Footers/Footer';
@@ -11,41 +12,80 @@ import Sidebar from './components/Admin/Sidebar';
 import Product from './components/Admin/Product/Product';
 import Dashboard from './components/Admin/Dashboard';
 import LandingPage from './components/LandingPage';
-import Coustomer from './components/Admin/Coustomer/Customer';
+import Customer from './components/Admin/Coustomer/Customer'; // Corrected "Coustomer" to "Customer"
 import About from './components/Headers/About';
 import Order from './components/Admin/Order';
 import Register from './components/Authentications/Register';
 import UserDashboard from './components/User/UserDashboard';
+import Profile from './components/Headers/Profile';
 
 function App() {
   return (
     <div className="App">
       <Router>
-        
-        <Navbar />
-        <Header />
-        
-          <Routes>
-            <Route path='/' element={<LandingPage />}/>
-            <Route path="/home" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/login" element={<Login/>} />
-            <Route path="/register" element={<Register/>} />
-            <Route path='/user/userDashboard' element={<UserDashboard/>}/>
-
-            {/* Admin Routes */}
-            
-            <Route path='/admin/sidebar'element={<Sidebar />}/>
-            <Route path="/admin" element={<Dashboard />} />
-            <Route path="/admin/product" element={<Product />} />
-            <Route path='/admin/order' element={<Order />}/>
-            <Route path="/admin/coustomer" element={<Coustomer />} />
-          </Routes>
-      
-        
-        <Footer />
+        <AppContent />
       </Router>
     </div>
+  );
+}
+
+function AppContent() {
+  // Utility to get cookie value
+  const getCookie = (userCookie) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${userCookie}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  };
+
+  // Check if user is logged in
+  const validAuth = () => {
+    const userToken = getCookie("token");
+    return userToken !== null;
+  };
+
+  const isLoggedIn = validAuth();
+
+  // PublicRoute
+  const PublicRoute = ({ element }) => {
+    return !isLoggedIn ? element : <Navigate to="/user/userDashboard" />;
+  };
+
+  // PrivateRoute
+  const PrivateRoute = ({ element }) => {
+    return isLoggedIn ? element : <Navigate to="/login" />;
+  };
+
+  return (
+    <>
+      <Navbar />
+      <Header />
+
+      <Routes>
+        {/* Public Pages */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/profile" element={<Profile />} />
+
+        {/* Authentication */}
+        <Route path="/login" element={<PublicRoute element={<Login />} />} />
+        <Route path="/register" element={<PublicRoute element={<Register />} />} />
+        <Route path="/forgotPassword" element={<PublicRoute element={<Register />} />} />
+
+        {/* User Pages */}
+        <Route path="/user/userDashboard" element={<PrivateRoute element={<UserDashboard />} />} />
+
+        {/* Admin Pages */}
+        <Route path="/admin/sidebar" element={<PrivateRoute element={<Sidebar />} />} />
+        <Route path="/admin" element={<PrivateRoute element={<Dashboard />} />} />
+        <Route path="/admin/product" element={<PrivateRoute element={<Product />} />} />
+        <Route path="/admin/order" element={<PrivateRoute element={<Order />} />} />
+        <Route path="/admin/customer" element={<PrivateRoute element={<Customer />} />} />
+      </Routes>
+
+      <Footer />
+    </>
   );
 }
 
