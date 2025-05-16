@@ -2,16 +2,18 @@
 
 // Save token on login
 export const loginUser = (token) => {
-  sessionStorage.setItem("token", token);
+  document.cookie = `token=${token}; path=/; max-age=3600`;
 };
 
 // Remove token on logout
-// export const logoutUser = (navigate) => {
-//   sessionStorage.removeItem("token");
-//   navigate("/login");
-// };
+export const logoutUser = (navigate) => {
+  document.cookie = "token=; path=/; max-age=0";
+  navigate("/");
+};
 
 // Check login status
 export const isLogin = () => {
-  return !!sessionStorage.getItem("token");
+  return document.cookie
+    .split(";")
+    .some((item) => item.trim().startsWith("token="));
 };

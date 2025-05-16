@@ -1,0 +1,385 @@
+// // import React from 'react';
+// // import { Link, useNavigate } from 'react-router-dom';
+// // import { isLogin, logoutUser } from '../Authentications/Auth';
+
+// // const Navbar = () => {
+// //   const navigate = useNavigate();
+// //   const loggedIn = isLogin();
+
+// //   return (
+// //     <div>
+// //       <ul className='flex gap-x-2 bg-gray-700 text-white p-2'>
+// //         <li><Link to="/">Home</Link></li>
+// //         <li><Link to="/about">About</Link></li>
+// //         {loggedIn && <li><Link to="/profile">Profile</Link></li>}
+
+// //         <div className='ml-auto mr-4'>
+// //           {loggedIn ? (
+
+// //             <button
+// //               className="flex gap-x-2 justify-end text-white cursor-pointer hover:bg-yellow-500 hover:text-black hover:rounded-sm px-4 "
+// //               onClick={() => navigate("/login")}
+// //             >
+// //               Login
+// //             </button>
+// //           ) : (
+// //           <button
+// //             className="flex gap-x-2 justify-end text-white cursor-pointer hover:bg-yellow-500 hover:text-black hover:rounded-sm px-4 "
+// //             onClick={() => {
+// //               logoutUser(navigate);
+// //               window.location.reload();
+// //             }}
+// //           >
+// //             Logout
+// //           </button>
+// //           )}
+// //         </div>
+// //       </ul>
+// //     </div>
+// //   );
+// // };
+
+// // export default Navbar;
+
+// // Navbar
+
+// // // src/Authentications/Auth.js
+
+// // // Save token on login
+// // export const loginUser = (token) => {
+// //   document.cookie = `token=${token}; path=/ ; max-age = 3600`;
+// // };
+
+// // // Remove token on logout
+// // export const logoutUser =(navigate) => {
+// //   document.cookie = `token = ; path = /; max-age = 0`;
+// //   navigate("/login")
+// // }
+
+
+// // // Check login status
+// // export const isLogin = () => {
+// //   return document.cookie
+// //   .split(";")
+// //   .some((item) => item.trim().startsWith("token = "));
+// // };
+
+// // Auth
+
+// // import axios from 'axios';
+// // import React, { useState } from 'react';
+// // import { useNavigate } from 'react-router-dom';
+
+// // const Login = () => {
+// //   const navigate = useNavigate();
+
+// //   // Initialized States for Input values
+// //   const [inputValue, setInputValue] = useState({
+// //     email: '',
+// //     password: ''
+// //   });
+
+// //   // Initialized password state
+// //   const [showPassword, setShowPassword] = useState(false);
+
+
+// //   // Initialized States for errors
+// //   const [errors, setErrors] = useState({});
+
+// //   // InputChange Handler 
+// //   const inputChangeHandler = (e) => {
+// //     const { name, value } = e.target;
+// //     setInputValue((prevValue) => ({
+// //       ...prevValue,
+// //       [name]: value
+// //     }));
+
+// //     // Remove error for the field as user starts typing
+// //     setErrors((prevErrors) => ({
+// //       ...prevErrors,
+// //       [name]: ""
+// //     }));
+// //   };
+
+// //   // Function to Validate Fields
+// //   const validateFields = () => {
+// //     let newErrors = {};
+// //     const emailExpr = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+// //     const passwordExpr = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d!@#$%&*]{6,}$/;
+
+// //     // Email Validation
+// //     if (!inputValue.email) {
+// //       newErrors.email = "Email is required";
+// //     } else if (!emailExpr.test(inputValue.email)) {
+// //       newErrors.email = "Invalid email format";
+// //     }
+
+// //     // Password Validation
+// //     if (!inputValue.password) {
+// //       newErrors.password = "Password is required";
+// //     } else if (!passwordExpr.test(inputValue.password)) {
+// //       newErrors.password = "Password must have at least 1 uppercase letter, 1 lowercase letter, and 1 number";
+// //     }
+
+// //     setErrors(newErrors);
+// //     return Object.keys(newErrors).length === 0; // If no errors, return true
+// //   };
+
+// //   //Toggle function for Show password
+// //   const showPasswordToggel = () => {
+// //     setShowPassword(preState => !preState)
+// //   };
+
+// //   // Form Submit Handler
+// //   const formSubmit = (e) => {
+// //     e.preventDefault(); // Prevent default form submission behavior
+
+// //     if (!validateFields()) {
+// //       return; // Stop if validation fails
+// //     }
+
+// //     const formData = new FormData();
+// //     formData.append('email', inputValue.email);
+// //     formData.append('password', inputValue.password);
+
+// //     axios.post('https://localhost:7219/login', formData)
+// //       .then((responseNoObject) => {
+// //         console.log("Response from backend:", responseNoObject);  // Log the full response to inspect it
+// //         if (responseNoObject.data && responseNoObject.data.data) {
+// //           document.cookie = `token=${responseNoObject.data.data}; path=/; max-age=3600`;
+// //           // sessionStorage.setItem('jwtToken', responseNoObject.data.data);  // Set JWT token in sessionStorage
+// //           setInputValue({
+// //             email: '',
+// //             password: ''
+// //           });
+// //           navigate('/user/userDashboard');
+// //         } else {
+// //           console.error("JWT not found in the response.");
+// //           alert("Login failed. Please try again.");
+// //         }
+// //       })
+// //       .catch((errorNoObject) => {
+// //         console.error("Error occurred:", errorNoObject);  // Log error
+// //         alert("An error occurred. Please check your credentials and try again.");
+// //         setInputValue({
+// //           email: '',
+// //           password: ''
+// //         });
+// //       });
+// //   };
+
+
+// //   return (
+// //     <div className='max-w-md mx-auto mt-9 mb-5 flex gap-4 p-6 border border-gray-500 rounded-md flex-col shadow-lg'>
+// //       <h2 className='text-center text-3xl font-bold mb-4 text-gray-800'>Login</h2>
+
+// //       <form onSubmit={formSubmit} className='flex flex-col space-y-5'>
+
+// //         {/* Email */}
+// //         <div>
+// //           <label className='block font-semibold text-gray-700 focus:outline-none'>Email :</label>
+// //           <input
+// //             type='text'
+// //             id='email'
+// //             name='email'
+// //             value={inputValue.email}
+// //             onChange={inputChangeHandler} // Handling input changes
+// //             placeholder='Enter your email'
+// //             className='w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+// //           />
+// //           {errors.email && <span className='text-red-600'>{errors.email}</span>} {/* Show error */}
+// //         </div>
+
+// //         {/* Password */}
+// //         <div>
+// //           <label className='block font-semibold text-gray-700'>Password :</label>
+// //           <input
+// //             type={showPassword ? 'text' : 'password'}
+// //             id='password'
+// //             name='password'
+// //             value={inputValue.password}
+// //             onChange={inputChangeHandler} // Handling input changes
+// //             placeholder='Enter your password'
+// //             className='w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+// //           />
+// //           {errors.password && <span className='text-red-600'>{errors.password}</span>} {/* Show error */}
+// //         </div>
+
+// //         {/* Show Password Checkbox */}
+// //         <div className='flex items-center space-x-2 '>
+// //           <input
+// //             type='checkbox'
+// //             id='showPassword'
+// //             checked={showPassword}
+// //             onChange={showPasswordToggel}
+// //             className='w-4 h-4 cursor-pointer'
+// //           />
+// //           <label htmlFor='show Password' className='text-black font-medium'>Show Password</label>
+// //         </div>
+
+// //         {/* Login Button */}
+// //         <button className='bg-yellow-500 border rounded-md p-2 transition duration-300 hover:bg-yellow-400 hover:scale-105 hover:shadow-lg hover:shadow-yellow-500'>
+// //           Login
+// //         </button>
+
+// //         <h5>
+// //         Register?{" "}
+// //         <a
+// //           onClick={() => navigate("/register")}
+// //           className="text-black cursor-pointer font-bold hover:text-green-900"
+// //         >
+// //           Sign in
+// //         </a>
+// //       </h5>
+
+// //       </form>
+// //     </div>
+// //   );
+// // };
+
+// // export default Login;
+
+// // Login
+
+// // import React from 'react';
+// // import { useNavigate } from 'react-router-dom';
+
+// // const Profile = () => {
+// //   const navigate = useNavigate();
+
+// //   const handleLogout = () => {
+// //     // ✅ Cookie delete
+// //     document.cookie = "token=; path=/; max-age=0";
+    
+// //     // ✅ Redirect to home/login
+// //     navigate("/login");
+
+// //     // ✅ Reload to update navbar
+// //     window.location.reload();
+// //   };
+
+// //   return (
+// //     <div className='flex flex-col items-center mt-10'>
+// //       <h1 className='text-2xl font-bold mb-4'>Welcome to your Profile</h1>
+      
+// //       <button 
+// //         onClick={handleLogout}
+// //         className='bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700'
+// //       >
+// //         Logout
+// //       </button>
+// //     </div>
+// //   );
+// // };
+
+// // export default Profile;
+
+// // Profile
+
+// // Dekh ye sab meri files he isme na muje asa perform karna he ki jab mera user meri web site pe aaye tab usko navbar me home , about or login ka button hi aaye 
+
+// // pehle to ye perform karna he 
+
+// // phir jab bhi user login kare to cookie me JWT store hona chahiye or uske baad user ko login ka button nahi dikhna chahiye  lekin uski jagah user ko profile page ki link navbar me dikhni chahiye 
+
+// // uske bad profile page me logout ka button ho or uspe click karte hi apni cookie remove ho jani chahiye
+
+// // Itna hi perfom karvana he to iske liye ye di huyi files me kya changes karne padege  ??
+
+
+
+// _______________________________________________________________________________________________________________
+
+// import './App.css';
+// import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
+// import Header from './components/Headers/Header';
+// import Navbar from './components/Headers/Navbar';
+// import { Footer } from './components/Footers/Footer';
+// import { Contact } from './components/Footers/Contact';
+// import Home from './components/Headers/Home';
+
+// import Login from './components/Authentications/Login';
+// import Sidebar from './components/Admin/Sidebar';
+// import Product from './components/Admin/Product/Product';
+// import Dashboard from './components/Admin/Dashboard';
+// import LandingPage from './components/LandingPage';
+// import Customer from './components/Admin/Coustomer/Customer'; // Corrected "Coustomer" to "Customer"
+// import About from './components/Headers/About';
+// import Order from './components/Admin/Order';
+// import Register from './components/Authentications/Register';
+// import UserDashboard from './components/User/UserDashboard';
+// import Profile from './components/Headers/Profile';
+
+// function App() {
+//   return (
+//     <div className="App">
+//       <Router>
+//         <AppContent />
+//       </Router>
+//     </div>
+//   );
+// }
+
+// function AppContent() {
+//   // Utility to get cookie value
+//   const getCookie = (userCookie) => {
+//     const value = `; ${document.cookie}`;
+//     const parts = value.split(`; ${userCookie}=`);
+//     if (parts.length === 2) return parts.pop().split(';').shift();
+//     return null;
+//   };
+
+//   // Check if user is logged in
+//   const validAuth = () => {
+//     const userToken = getCookie("token");
+//     return userToken !== null;
+//   };
+
+//   const isLoggedIn = validAuth();
+
+//   // PublicRoute
+//   const PublicRoute = ({ element }) => {
+//     return !isLoggedIn ? element : <Navigate to="/user/userDashboard" />;
+//   };
+
+//   // PrivateRoute
+//   const PrivateRoute = ({ element }) => {
+//     return isLoggedIn ? element : <Navigate to="/login" />;
+//   };
+
+//   return (
+//     <>
+//       <Navbar />
+//       <Header />
+
+//       <Routes>
+//         {/* Public Pages */}
+//         <Route path="/" element={<LandingPage />} />
+//         <Route path="/home" element={<Home />} />
+//         <Route path="/about" element={<About />} />
+//         <Route path="/profile" element={<Profile />} />
+
+//         {/* Authentication */}
+//         <Route path="/login" element={<PublicRoute element={<Login />} />} />
+//         <Route path="/register" element={<PublicRoute element={<Register />} />} />
+//         <Route path="/forgotPassword" element={<PublicRoute element={<Register />} />} />
+
+//         {/* User Pages */}
+//         <Route path="/user/userDashboard" element={<PrivateRoute element={<UserDashboard />} />} />
+
+//         {/* Admin Pages */}
+//         <Route path="/admin/sidebar" element={<PrivateRoute element={<Sidebar />} />} />
+//         <Route path="/admin" element={<PrivateRoute element={<Dashboard />} />} />
+//         <Route path="/admin/product" element={<PrivateRoute element={<Product />} />} />
+//         <Route path="/admin/order" element={<PrivateRoute element={<Order />} />} />
+//         <Route path="/admin/customer" element={<PrivateRoute element={<Customer />} />} />
+//       </Routes>
+
+//       <Footer />
+//     </>
+//   );
+// }
+
+// export default App;
+

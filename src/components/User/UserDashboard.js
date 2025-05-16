@@ -12,14 +12,14 @@ const UserDashboard = () => {
   }, []);
 
   return (
-    <div className="bg-green-700 min-h-screen text-black px-8 py-6">
+    <div className="bg-white min-h-screen text-black px-8 py-6">
       <h1 className="text-3xl font-bold mb-6 text-center">Product Store</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product, index) => (
           <div
             key={index}
-            className="bg-yellow-100 rounded-2xl overflow-hidden shadow-lg"
+            className="bg-yellow-400 rounded-2xl overflow-hidden shadow-lg"
           >
             <img
               src={
