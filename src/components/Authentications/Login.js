@@ -45,7 +45,7 @@ const Login = () => {
         if (res.data?.data) {
           loginUser(res.data.data); // 
           setInputValue({ email: '', password: '' });
-          navigate('/user/userDashboard'); 
+          navigate('/user/userDashboard');
           window.location.reload(); // 
         } else {
           alert("Login failed. Please try again.");
@@ -87,21 +87,30 @@ const Login = () => {
             />
             {errors.password && <span className='text-red-600'>{errors.password}</span>}
           </div>
-          <div className='flex items-center space-x-2'>
+          {/* <div className='flex items-center space-x-2'>
             <input
-              type='checkbox'
+              type=''
               id='showPassword'
               checked={showPassword}
               onChange={() => setShowPassword(!showPassword)}
               className='w-4 h-4'
             />
-            <label htmlFor='showPassword' className='text-black font-medium'>Show Password</label>
-          </div>
-          <button className='bg-yellow-500 rounded-md p-2 hover:bg-yellow-400 hover:scale-105 hover:shadow-lg'>
+            {/* <label htmlFor='showPassword' className='text-black font-medium'>Show Password</label> */}
+          {/* </div>  */}
+          <button className="bg-yellow-500 text-black font-semibold rounded-md p-2 hover:bg-yellow-500 hover:scale-105 hover:shadow-lg">
             Login
           </button>
-          <h5>
-            Don't have an account ? {" "}
+          <h5 className='m-1'>
+            Forgot your Password ? &nbsp;
+            <span
+              onClick={() => navigate("/forgotPassword")}
+              className="text-black font-bold cursor-pointer hover:text-green-900"
+            >
+              Forgot password
+            </span>
+          </h5>
+          <h5 className='m-1'>
+            Don't have an account ? &nbsp;
             <span
               onClick={() => navigate("/register")}
               className="text-black font-bold cursor-pointer hover:text-green-900"
@@ -110,15 +119,7 @@ const Login = () => {
             </span>
           </h5>
 
-          <h5>
-            {" "}
-            <span
-              onClick={() => navigate("/forgotPassword")}
-              className="text-black font-bold cursor-pointer hover:text-green-900"
-            >
-              Forgot password
-            </span>
-          </h5>
+
         </form>
       </div>
     </div>

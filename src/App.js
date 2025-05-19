@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Header from './components/Headers/Header';
 import Navbar from './components/Headers/Navbar';
 import { Footer } from './components/Footers/Footer';
-import { Contact } from './components/Footers/Contact';
+
 import Home from './components/Headers/Home';
 
 import Login from './components/Authentications/Login';
@@ -18,6 +18,7 @@ import Order from './components/Admin/Order';
 import Register from './components/Authentications/Register';
 import UserDashboard from './components/User/UserDashboard';
 import Profile from './components/Headers/Profile';
+import ForgotPassword from './components/Authentications/ForgotPassword'
 
 function App() {
   return (
@@ -53,25 +54,23 @@ function AppContent() {
 
   // PrivateRoute
   const PrivateRoute = ({ element }) => {
-    return isLoggedIn ? element : <Navigate to="/login" />;
+    return isLoggedIn ? element : <Navigate to="/" />;
   };
 
   return (
     <>
       <Navbar />
-      <Header />
-
       <Routes>
         {/* Public Pages */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path='/' element={<PublicRoute element={<UserDashboard />} />} />
+        <Route path="/home" element={<PublicRoute element={<Home />} />} />
+        <Route path="/about" element={<PublicRoute element={<About />} />} />
+        <Route path="/profile" element={<PublicRoute element={<Profile />} />} />
 
         {/* Authentication */}
         <Route path="/login" element={<PublicRoute element={<Login />} />} />
         <Route path="/register" element={<PublicRoute element={<Register />} />} />
-        <Route path="/forgotPassword" element={<PublicRoute element={<Register />} />} />
+        <Route path="/forgotPassword" element={<PublicRoute element={<ForgotPassword />} />} />
 
         {/* User Pages */}
         <Route path="/user/userDashboard" element={<PrivateRoute element={<UserDashboard />} />} />
@@ -82,8 +81,10 @@ function AppContent() {
         <Route path="/admin/product" element={<PrivateRoute element={<Product />} />} />
         <Route path="/admin/order" element={<PrivateRoute element={<Order />} />} />
         <Route path="/admin/customer" element={<PrivateRoute element={<Customer />} />} />
-      </Routes>
 
+        
+        
+      </Routes>      
       <Footer />
     </>
   );

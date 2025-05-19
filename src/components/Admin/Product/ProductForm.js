@@ -5,8 +5,7 @@ const ProductForm = ({ product, onClose, onRefresh }) => {
     const [formData, setFormData] = useState({
         product_name: '',
         product_description: '',
-        product_price: '',
-        product_image: '',
+        product_price: null,
         product_isActive: true,
         category_id: '',
     });
@@ -19,51 +18,74 @@ const ProductForm = ({ product, onClose, onRefresh }) => {
                 product_price: product.product_price,
                 product_image: product.product_image,
                 product_isActive: product.product_isActive,
-                category_id: product.category_id || '', 
+                category_id: product.category_id || '',
             });
         }
     }, [product]);
 
+
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData({
-            ...formData,
-            [name]: type === 'checkbox' ? checked : value,
-        });
+        const { name, value, type, checked, files } = e.target;
+
+        if (name === 'product_price') {
+            setFormData((prev) => ({
+                ...prev,
+                product_price: value || '', // Handle price as string
+            }));
+        } else if (name === 'product_image' && files) {
+            setFormData((prev) => ({
+                ...prev,
+                product_image: files[0] || null, // Handle the image file
+            }));
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: type === 'checkbox' ? checked : value,
+            }));
+        }
     };
+
 
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         const form = new FormData();
-        // form.append("ProductPrice", formData.product_price);
-        for (const key in formData) {
-            form.append(key, formData[key]?.toString());
-        }
-        if (product) {
-            axios.put(`https://localhost:7219/api/Product/updateProduct/${product.product_id}`, form)
-                .then((res) => {
-                    console.log("Response is : ", res);
-                    onRefresh();
-                    onClose();
-                }).catch((err) => {
-                    console.log("Product is not updated : ", err)
-                });
+        const fileInput = document.getElementById("product_image"); // Change to correct input ID for image
 
-        } else {
-            axios.post("https://localhost:7219/api/Product/addProduct", form)
-
-                .then((response) => {
-                    console.log("Response:", response);
-                    onRefresh();
-                    onClose();
-                })
-                .catch((err) => {
-                    console.error("Error submitting form data:", err);
-                });
+        // Make sure fileInput is valid and has files
+        if (fileInput && fileInput.files && fileInput.files.length > 0) {
+    form.append("product_image", fileInput.files[0]); // ✅ This is correct
         }
-    }
+
+        // Append other form data
+        form.append("product_name", formData.product_name || "");
+        form.append("product_description", formData.product_description || "");
+        form.append("category_id", formData.category_id || "");
+
+        // Check if the price is valid (number, not null)
+        if (formData.product_price && !isNaN(formData.product_price)) {
+            form.append("product_price", formData.product_price);
+        }
+
+        // Use the right API URL depending on whether the product exists
+        const url = product
+            ? `https://localhost:7219/api/Product/updateProduct/${product.product_id}`
+            : "https://localhost:7219/api/Product/addProduct";
+
+        const request = product ? axios.put(url, form) : axios.post(url, form);
+
+        request
+            .then((res) => {
+                console.log("Response is:", res);
+                onRefresh();
+                onClose();
+            })
+            .catch((err) => {
+                console.error("Error submitting form data:", err);
+            });
+    };
+
 
 
 
@@ -78,16 +100,16 @@ const ProductForm = ({ product, onClose, onRefresh }) => {
 
                     <textarea name="product_description" placeholder="Description" className="w-full p-2 border" value={formData.product_description} onChange={handleChange} required />
 
-                    <input name="product_price" type="number" placeholder="Price" className="w-full p-2 border" value={formData.product_price} onChange={handleChange} required />
+                    <input name="product_price" id="product_price" type="number" placeholder="Price" className="w-full p-2 border" value={formData.product_price} onChange={handleChange} required />
 
-                    <input type='file' name="product_image" placeholder="Image URL" className="w-full p-2 border" value={formData.product_image} onChange={handleChange} />
+                    <input type='file' name="product_image" id='product_image' placeholder="Image URL" className="w-full p-2 border"  onChange={handleChange} />
 
-
+{/* // bc mene id di thi na */}
                     <select
                         name="category_id"
                         className='w-full p-2 border'
                         value={formData.category_id} // Bind value to formData.category_id
-                        onChange={handleChange} 
+                        onChange={handleChange}
                     >
                         <option value="default">Select Category</option>
                         <option value="1">Electric</option>

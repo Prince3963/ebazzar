@@ -138,12 +138,6 @@ const Register = () => {
 
 
       <form onSubmit={formSubmit} className="flex flex-col space-y-5">
-        {errors.email && <span className="text-red-600">{errors.email}</span>}
-            {apiError && (
-              <div className=" text-red-600 rounded">
-                {apiError}
-              </div>
-            )}
         {/* Username */}
         <div>
           <label className="block font-semibold text-gray-700">Username:</label>
@@ -154,7 +148,7 @@ const Register = () => {
             onChange={inputChangeHandle}
             placeholder="Enter your username"
             className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+            />
           {errors.username && <span className="text-red-600">{errors.username}</span>}
         </div>
 
@@ -169,6 +163,12 @@ const Register = () => {
             placeholder="Enter your email"
             className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {errors.email && <span className="text-red-600">{errors.email}</span>}
+                {apiError && (
+                  <div className=" text-red-600 rounded">
+                    {apiError}
+                  </div>
+                )}
           
         </div>
 
@@ -228,7 +228,7 @@ const Register = () => {
 
         <button
           id="registerbtn"
-          className="bg-yellow-500 border rounded-md p-2 transition duration-300 ease-in-out hover:bg-yellow-400 hover:scale-105 hover:shadow-lg hover:shadow-yellow-500">
+          className="bg-yellow-500 text-black font-semibold rounded-md p-2 hover:bg-yellow-500 hover:scale-105 hover:shadow-lg">
           Register
         </button>
       </form>
@@ -239,7 +239,7 @@ const Register = () => {
           onClick={() => navigate("/login")}
           className="text-black cursor-pointer font-bold hover:text-green-900"
         >
-          Sign in
+        &nbsp;Sign in
         </a>
       </h5>
 
