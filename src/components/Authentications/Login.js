@@ -1,4 +1,3 @@
-// src/pages/Login.js
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -42,84 +41,93 @@ const Login = () => {
 
     axios.post('https://localhost:7219/login', formData)
       .then((res) => {
-        if (res.data?.data) {
-          loginUser(res.data.data); // 
+        if (res.data.data !== "0") {
+          loginUser(res.data.data);
+          console.log(res.data);
+          
           setInputValue({ email: '', password: '' });
           navigate('/user/userDashboard');
-          window.location.reload(); // 
+          // window.location.reload();
         } else {
           alert("Login failed. Please try again.");
         }
       })
       .catch(() => {
-        alert("An error occurred. Please check your credentials.");
+        
         setInputValue({ email: '', password: '' });
       });
   };
 
   return (
-    <div className='http://localhost:3000/'>
+    <div className='min-h-screen flex items-center justify-center bg-gradient-to-r from-cyan-800 to-blue-900 px-4'>
+      <div className='w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl'>
+        <h2 className='text-3xl font-bold text-center text-gray-800 mb-6'>Login</h2>
 
-      <div className='max-w-md mx-auto mt-9 mb-5 p-6 border border-gray-500 rounded-md shadow-lg'>
-        <h2 className='text-center text-3xl font-bold mb-4 text-gray-800'>Login</h2>
-        <form onSubmit={formSubmit} className='flex flex-col space-y-5'>
+        <form onSubmit={formSubmit} className='space-y-5'>
+
           <div>
-            <label className='font-semibold'>Email:</label>
+            <label className='block text-gray-700 font-semibold mb-1'>Email</label>
             <input
               type='text'
               name='email'
               value={inputValue.email}
               onChange={inputChangeHandler}
               placeholder='Enter your email'
-              className='w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600'
             />
-            {errors.email && <span className='text-red-600'>{errors.email}</span>}
+            {errors.email && <p className='text-sm text-red-600 mt-1'>{errors.email}</p>}
           </div>
+
           <div>
-            <label className='font-semibold'>Password:</label>
+            <label className='block text-gray-700 font-semibold mb-1'>Password</label>
             <input
               type={showPassword ? 'text' : 'password'}
               name='password'
               value={inputValue.password}
               onChange={inputChangeHandler}
               placeholder='Enter your password'
-              className='w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600'
             />
-            {errors.password && <span className='text-red-600'>{errors.password}</span>}
+            {errors.password && <p className='text-sm text-red-600 mt-1'>{errors.password}</p>}
           </div>
-          {/* <div className='flex items-center space-x-2'>
+
+          <div className='flex items-center'>
             <input
-              type=''
+              type='checkbox'
               id='showPassword'
               checked={showPassword}
               onChange={() => setShowPassword(!showPassword)}
-              className='w-4 h-4'
+              className='w-4 h-4 text-cyan-600 focus:ring-cyan-600'
             />
-            {/* <label htmlFor='showPassword' className='text-black font-medium'>Show Password</label> */}
-          {/* </div>  */}
-          <button className="bg-yellow-500 text-black font-semibold rounded-md p-2 hover:bg-yellow-500 hover:scale-105 hover:shadow-lg">
+            <label htmlFor='showPassword' className='ml-2 text-sm text-gray-700'>Show Password</label>
+          </div>
+
+          <button
+            type='submit'
+            className="w-full py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-semibold rounded-lg transition duration-200"
+          >
             Login
           </button>
-          <h5 className='m-1'>
-            Forgot your Password ? &nbsp;
+
+          <div className='text-sm text-center text-gray-700 mt-2'>
+            Forgot your Password?{" "}
             <span
               onClick={() => navigate("/forgotPassword")}
-              className="text-black font-bold cursor-pointer hover:text-green-900"
+              className="text-cyan-700 font-bold cursor-pointer hover:underline"
             >
-              Forgot password
+              Forgot Password
             </span>
-          </h5>
-          <h5 className='m-1'>
-            Don't have an account ? &nbsp;
+          </div>
+
+          <div className='text-sm text-center text-gray-700'>
+            Don’t have an account?{" "}
             <span
               onClick={() => navigate("/register")}
-              className="text-black font-bold cursor-pointer hover:text-green-900"
+              className="text-cyan-700 font-bold cursor-pointer hover:underline"
             >
               Sign Up
             </span>
-          </h5>
-
-
+          </div>
         </form>
       </div>
     </div>

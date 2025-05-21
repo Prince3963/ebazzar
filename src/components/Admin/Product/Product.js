@@ -10,17 +10,17 @@ const Product = () => {
   const [showForm, setShowForm] = useState(false);
 
   const fetchProducts = async () => {
-  try {
-    const response = await axios.get("https://localhost:7219/api/Product/viewProduct"); // 👈 actual API laga dena
-    setProducts(response.data);
-  } catch (error) {
-    console.error("Error fetching products:", error);
-  }
-};
+    try {
+      const response = await axios.get("https://localhost:7219/api/Product/viewProduct");
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
 
-useEffect(() => {
-  fetchProducts();
-}, []);
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const handleAddClick = () => {
     setEditingProduct(null);
@@ -35,31 +35,45 @@ useEffect(() => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`https://your-api-url/products/${id}`);
-    //   fetchProducts();
+      // fetchProducts();
     } catch (error) {
       console.error("Error deleting product:", error);
     }
   };
 
   return (
-    <div className="flex ">
+    <div className="flex min-h-screen bg-gradient-to-br text-cyan800">
       <Sidebar />
-      <div className="p-8 w-full">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Product Management</h1>
-          <button className="hover:bg-yellow-600 bg-blue-600 text-white px-4 py-2 rounded" onClick={handleAddClick}>
+
+      <div className="flex-1 p-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">Product Management</h1>
+          <button
+            onClick={handleAddClick}
+            className="bg-cyan-600 hover:bg-yellow-600 text-black font-semibold px-5 py-2 rounded-lg transition duration-200"
+          >
             + Add Product
           </button>
         </div>
 
-        <ProductTable products={[...products].reverse()} onEdit={handleEdit} /*onDelete={handleDelete}*/ />
+        <div className="bg-white rounded-xl shadow-lg p-6 text-black">
+          <ProductTable
+            products={[...products].reverse()}
+            onEdit={handleEdit}
+            // onDelete={handleDelete}
+          />
+        </div>
 
         {showForm && (
-          <ProductForm
-            product={editingProduct}
-            onClose={() => setShowForm(false)}
-            onRefresh={fetchProducts}
-          />
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-2xl">
+              <ProductForm
+                product={editingProduct}
+                onClose={() => setShowForm(false)}
+                onRefresh={fetchProducts}
+              />
+            </div>
+          </div>
         )}
       </div>
     </div>

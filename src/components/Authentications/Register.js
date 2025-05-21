@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const navigate = useNavigate();
-  const [apiError, setApiError] = useState('');
+  const [apiError, setApiError] = useState("");
 
   const [inputValue, setInputValue] = useState({
     username: "",
@@ -17,7 +17,6 @@ const Register = () => {
 
   const [errors, setErrors] = useState({});
 
-  // Eye toggle states
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -105,11 +104,9 @@ const Register = () => {
     axios.post(`https://localhost:7219/api/User`, formData)
       .then((response) => {
         if (response.data.data === "0") {
-          setApiError("**Email already exist")
+          setApiError("**Email already exists");
         } else {
-          navigate("/login")
-          // console.log("barabar 6e ");
-          
+          navigate("/login");
           setInputValue({
             username: "",
             email: "",
@@ -133,117 +130,113 @@ const Register = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-9 mb-5 flex gap-4 p-6 border border-gray-500 rounded-md flex-col shadow-lg">
-      <h2 className="text-center text-3xl font-bold mb-4 text-gray-800">Registration</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-cyan-800 to-blue-900 px-4">
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Register</h2>
 
-
-      <form onSubmit={formSubmit} className="flex flex-col space-y-5">
-        {/* Username */}
-        <div>
-          <label className="block font-semibold text-gray-700">Username:</label>
-          <input
-            type="text"
-            name="username"
-            value={inputValue.username}
-            onChange={inputChangeHandle}
-            placeholder="Enter your username"
-            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <form onSubmit={formSubmit} className="space-y-5">
+          {/* Username */}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Username</label>
+            <input
+              type="text"
+              name="username"
+              value={inputValue.username}
+              onChange={inputChangeHandle}
+              placeholder="Enter your username"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600"
             />
-          {errors.username && <span className="text-red-600">{errors.username}</span>}
-        </div>
+            {errors.username && <span className="text-red-600 text-sm">{errors.username}</span>}
+          </div>
 
-        {/* Email */}
-        <div>
-          <label className="block font-semibold text-gray-700">Email:</label>
-          <input
-            type="text"
-            name="email"
-            value={inputValue.email}
-            onChange={inputChangeHandle}
-            placeholder="Enter your email"
-            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          {/* Email */}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Email</label>
+            <input
+              type="text"
+              name="email"
+              value={inputValue.email}
+              onChange={inputChangeHandle}
+              placeholder="Enter your email"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600"
             />
-            {errors.email && <span className="text-red-600">{errors.email}</span>}
-                {apiError && (
-                  <div className=" text-red-600 rounded">
-                    {apiError}
-                  </div>
-                )}
-          
-        </div>
+            {errors.email && <span className="text-red-600 text-sm">{errors.email}</span>}
+            {apiError && <div className="text-red-600 text-sm mt-1">{apiError}</div>}
+          </div>
 
-        {/* Mobile */}
-        <div>
-          <label className="block font-semibold text-gray-700">Mobile no:</label>
-          <input
-            type="number"
-            name="mobile"
-            value={inputValue.mobile}
-            onChange={inputChangeHandle}
-            placeholder="Enter your mobile number"
-            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {errors.mobile && <span className="text-red-600">{errors.mobile}</span>}
-        </div>
+          {/* Mobile */}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Mobile No</label>
+            <input
+              type="number"
+              name="mobile"
+              value={inputValue.mobile}
+              onChange={inputChangeHandle}
+              placeholder="Enter your mobile number"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600"
+            />
+            {errors.mobile && <span className="text-red-600 text-sm">{errors.mobile}</span>}
+          </div>
 
-        {/* Password with toggle */}
-        <div className="relative">
-          <label className="block font-semibold text-gray-700">Password:</label>
-          <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            value={inputValue.password}
-            onChange={inputChangeHandle}
-            placeholder="Enter your password"
-            className="w-full p-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <span
-            onClick={togglePasswordVisibility}
-            className="absolute right-3 top-[38px] cursor-pointer text-gray-600"
+          {/* Password */}
+          <div className="relative">
+            <label className="block text-gray-700 font-semibold mb-1">Password</label>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={inputValue.password}
+              onChange={inputChangeHandle}
+              placeholder="Enter your password"
+              className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600"
+            />
+            <span
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-[42px] cursor-pointer text-gray-600"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+            {errors.password && <span className="text-red-600 text-sm">{errors.password}</span>}
+          </div>
+
+          {/* Confirm Password */}
+          <div className="relative">
+            <label className="block text-gray-700 font-semibold mb-1">Confirm Password</label>
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPass"
+              value={inputValue.confirmPass}
+              onChange={inputChangeHandle}
+              placeholder="Confirm your password"
+              className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600"
+            />
+            <span
+              onClick={toggleConfirmPasswordVisibility}
+              className="absolute right-3 top-[42px] cursor-pointer text-gray-600"
+            >
+              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+            {errors.confirmPass && <span className="text-red-600 text-sm">{errors.confirmPass}</span>}
+          </div>
+
+          {/* Register Button */}
+          <button
+            type="submit"
+            className="w-full py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-semibold rounded-lg transition duration-200"
           >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </span>
-          {errors.password && <span className="text-red-600">{errors.password}</span>}
-        </div>
+            Register
+          </button>
+        </form>
 
-        {/* Confirm Password with toggle */}
-        <div className="relative">
-          <label className="block font-semibold text-gray-700">Confirm Password:</label>
-          <input
-            type={showConfirmPassword ? "text" : "password"}
-            name="confirmPass"
-            value={inputValue.confirmPass}
-            onChange={inputChangeHandle}
-            placeholder="Confirm your password"
-            className="w-full p-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+        <p className="mt-4 text-center text-sm text-gray-700">
+          Already have an account?{" "}
           <span
-            onClick={toggleConfirmPasswordVisibility}
-            className="absolute right-3 top-[38px] cursor-pointer text-gray-600"
+            onClick={() => navigate("/login")}
+            className="text-cyan-700 font-bold cursor-pointer hover:underline"
           >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
+            Sign in
           </span>
-          {errors.confirmPass && <span className="text-red-600">{errors.confirmPass}</span>}
-        </div>
-
-        <button
-          id="registerbtn"
-          className="bg-yellow-500 text-black font-semibold rounded-md p-2 hover:bg-yellow-500 hover:scale-105 hover:shadow-lg">
-          Register
-        </button>
-      </form>
-
-      <h5>
-        Already have an account?{" "}
-        <a
-          onClick={() => navigate("/login")}
-          className="text-black cursor-pointer font-bold hover:text-green-900"
-        >
-        &nbsp;Sign in
-        </a>
-      </h5>
-
-      
+        </p>
+      </div>
     </div>
   );
 };

@@ -18,7 +18,7 @@ const Pagination = ({ totalPagePost, PostPerPage, setCurrentPage }) => {
                     <button
                         key={index}
                         onClick={() => setCurrentPage(page)}
-                        className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200 transform hover:scale-105">
+                        className="bg-yellow-700 text-black px-4 py-2 rounded-lg hover:bg-yellow-600 hover:text-black transition duration-200 transform hover:scale-105">
                         {page}
                     </button>
                 );

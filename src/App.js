@@ -19,6 +19,8 @@ import Register from './components/Authentications/Register';
 import UserDashboard from './components/User/UserDashboard';
 import Profile from './components/Headers/Profile';
 import ForgotPassword from './components/Authentications/ForgotPassword'
+import ResetPassword from './components/Authentications/ResetPassword'
+import Electronic from './components/User/Electronic';
 
 function App() {
   return (
@@ -66,21 +68,23 @@ function AppContent() {
         <Route path="/home" element={<PublicRoute element={<Home />} />} />
         <Route path="/about" element={<PublicRoute element={<About />} />} />
         <Route path="/profile" element={<PublicRoute element={<Profile />} />} />
+        <Route path="/electronic" element={<PublicRoute element={<Electronic />} />} />
 
         {/* Authentication */}
         <Route path="/login" element={<PublicRoute element={<Login />} />} />
         <Route path="/register" element={<PublicRoute element={<Register />} />} />
         <Route path="/forgotPassword" element={<PublicRoute element={<ForgotPassword />} />} />
+        <Route path="/resetPassword" element={<PublicRoute element={<ResetPassword />} />} />
 
         {/* User Pages */}
         <Route path="/user/userDashboard" element={<PrivateRoute element={<UserDashboard />} />} />
 
         {/* Admin Pages */}
-        <Route path="/admin/sidebar" element={<PrivateRoute element={<Sidebar />} />} />
-        <Route path="/admin" element={<PrivateRoute element={<Dashboard />} />} />
-        <Route path="/admin/product" element={<PrivateRoute element={<Product />} />} />
-        <Route path="/admin/order" element={<PrivateRoute element={<Order />} />} />
-        <Route path="/admin/customer" element={<PrivateRoute element={<Customer />} />} />
+        <Route path="/admin/sidebar" element={<PublicRoute element={<Sidebar />} />} />
+        <Route path="/admin" element={<PublicRoute element={<Dashboard />} />} />
+        <Route path="/admin/product" element={<PublicRoute element={<Product />} />} />
+        <Route path="/admin/order" element={<PublicRoute element={<Order />} />} />
+        <Route path="/admin/customer" element={<PublicRoute element={<Customer />} />} />
 
         
         
