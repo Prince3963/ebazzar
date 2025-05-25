@@ -1,9 +1,7 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-
-import Header from './components/Headers/Header';
 import Navbar from './components/Headers/Navbar';
-import { Footer } from './components/Footers/Footer';
+import Footer from './components/Footers/Footer';
 
 import Home from './components/Headers/Home';
 
@@ -21,6 +19,7 @@ import Profile from './components/Headers/Profile';
 import ForgotPassword from './components/Authentications/ForgotPassword'
 import ResetPassword from './components/Authentications/ResetPassword'
 import Electronic from './components/User/Electronic';
+import ProductDetails from './components/User/ProductDetails';
 
 function App() {
   return (
@@ -65,6 +64,7 @@ function AppContent() {
       <Routes>
         {/* Public Pages */}
         <Route path='/' element={<PublicRoute element={<UserDashboard />} />} />
+        <Route path='/product/:id' element={<PublicRoute element={<ProductDetails />} />} />
         <Route path="/home" element={<PublicRoute element={<Home />} />} />
         <Route path="/about" element={<PublicRoute element={<About />} />} />
         <Route path="/profile" element={<PublicRoute element={<Profile />} />} />
@@ -84,14 +84,15 @@ function AppContent() {
         <Route path="/admin" element={<PublicRoute element={<Dashboard />} />} />
         <Route path="/admin/product" element={<PublicRoute element={<Product />} />} />
         <Route path="/admin/order" element={<PublicRoute element={<Order />} />} />
-        <Route path="/admin/customer" element={<PublicRoute element={<Customer />} />} />
-
-        
-        
-      </Routes>      
+        <Route path="/admin/coustomer" element={<PublicRoute element={<Customer />} />} />        
+      </Routes>  
       <Footer />
+      
     </>
   );
 }
+
+
+// Edit Footer
 
 export default App;

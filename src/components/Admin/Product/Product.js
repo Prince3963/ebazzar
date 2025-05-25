@@ -33,13 +33,17 @@ const Product = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`https://your-api-url/products/${id}`);
-      // fetchProducts();
-    } catch (error) {
-      console.error("Error deleting product:", error);
-    }
-  };
+  try {
+    await axios.delete(`https://localhost:7219/api/Product/deleteProduct/${id}`, {
+      data: { product_id: id }, // sending body data
+      headers: { 'Content-Type': 'application/json' }
+    });
+    fetchProducts(); // Refresh product list
+  } catch (error) {
+    console.error("Error deleting product:", error);
+  }
+};
+
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br text-cyan800">
@@ -60,7 +64,7 @@ const Product = () => {
           <ProductTable
             products={[...products].reverse()}
             onEdit={handleEdit}
-            // onDelete={handleDelete}
+            onDelete={handleDelete}
           />
         </div>
 

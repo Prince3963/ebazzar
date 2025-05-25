@@ -104,7 +104,7 @@ const ProductForm = ({ product, onClose, onRefresh }) => {
 
                     <input type='file' name="product_image" id='product_image' placeholder="Image URL" className="w-full p-2 border"  onChange={handleChange} />
 
-{/* // bc mene id di thi na */}
+
                     <select
                         name="category_id"
                         className='w-full p-2 border'
@@ -112,8 +112,12 @@ const ProductForm = ({ product, onClose, onRefresh }) => {
                         onChange={handleChange}
                     >
                         <option value="default">Select Category</option>
-                        <option value="1">Electric</option>
-                        <option value="2">Cloths</option>
+                        <option value="1">Electronics</option>
+                        <option value="2">Fashion</option>
+                        <option value="3">Home Appliances</option>
+                        <option value="4">Books</option>
+                        <option value="5">Groceries</option>
+                        
                         {/* Add more categories here */}
                     </select>
 

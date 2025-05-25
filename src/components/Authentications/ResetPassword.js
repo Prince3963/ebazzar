@@ -116,8 +116,9 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-cyan-800 to-blue-900 px-4">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+    // <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-cyan-800 to-blue-900 px-4">
+    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 via-blue-200 to-indigo-400 px-4'>
+      <div className="bg-yellow-50 rounded-2xl shadow-xl p-8 w-full max-w-md">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Reset Your Password
         </h1>

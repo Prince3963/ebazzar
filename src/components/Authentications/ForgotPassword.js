@@ -43,25 +43,26 @@ const ForgotPassword = () => {
         "Content-Type": "multipart/form-data"
       }
     })
-    .then((response) => {
-      if (response.data.status === false) {
-        setResponseMessage({ type: 'error', text: 'Email does not exist!' });
-      } else {
-        setResponseMessage({ type: 'success', text: 'Reset link sent to your registered email.' });
-        setInputValue({ email: '' });
-      }
-    })
-    .catch((err) => {
-      setResponseMessage({ type: 'error', text: 'Something went wrong. Please try again later.' });
-    })
-    .finally(() => {
-      setLoading(false);
-    });
+      .then((response) => {
+        if (response.data.status === false) {
+          setResponseMessage({ type: 'error', text: 'Email does not exist!' });
+        } else {
+          setResponseMessage({ type: 'success', text: 'Reset link sent to your registered email.' });
+          setInputValue({ email: '' });
+        }
+      })
+      .catch((err) => {
+        setResponseMessage({ type: 'error', text: 'Something went wrong. Please try again later.' });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-cyan-800 to-blue-900 px-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl">
+    // <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-cyan-800 to-blue-900 px-4">
+    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 via-blue-200 to-indigo-400 px-4'>
+      <div className="w-full max-w-md bg-yellow-50 p-8 rounded-2xl shadow-2xl">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Forgot Password</h2>
 
         {/* Response Message */}
@@ -88,7 +89,7 @@ const ForgotPassword = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-semibold rounded-lg transition duration-200"
+            className="w-full py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-800 hover:to-blue-700 text-white font-semibold rounded-lg transition duration-200"
           >
             Reset Password
           </button>

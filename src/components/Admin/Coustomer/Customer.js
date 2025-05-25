@@ -9,7 +9,7 @@ const Customer = () => {
   // Fetch customers from API
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get("https://localhost:7219/api/User"); // Replace with the correct API URL
+      const response = await axios.get("https://localhost:7219/api/User"); 
       setCustomers(response.data);
     } catch (error) {
       console.error("Error fetching customers:", error);
@@ -17,7 +17,7 @@ const Customer = () => {
   };
 
   useEffect(() => {
-    fetchCustomers(); // Fetch customers when component mounts
+    fetchCustomers();
   }, []);
 
   return (

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const Register = () => {
   const navigate = useNavigate();
   const [apiError, setApiError] = useState("");
-
+  
   const [inputValue, setInputValue] = useState({
     username: "",
     email: "",
@@ -16,7 +16,6 @@ const Register = () => {
   });
 
   const [errors, setErrors] = useState({});
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -107,31 +106,32 @@ const Register = () => {
           setApiError("**Email already exists");
         } else {
           navigate("/login");
-          setInputValue({
-            username: "",
-            email: "",
-            mobile: "",
-            password: "",
-            confirmPass: "",
-          });
+          resetForm();
         }
       })
       .catch((error) => {
-        alert("Please try again later.");
+        setApiError("Registration failed. Please try again later.");
         console.error("Error:", error);
-        setInputValue({
-          username: "",
-          email: "",
-          mobile: "",
-          password: "",
-          confirmPass: "",
-        });
+        resetForm();
       });
   };
 
+  const resetForm = () => {
+    setInputValue({
+      username: "",
+      email: "",
+      mobile: "",
+      password: "",
+      confirmPass: "",
+    });
+    setApiError("");
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-cyan-800 to-blue-900 px-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl">
+    // <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-4">
+    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 via-blue-200 to-indigo-400 px-4'>
+
+      <div className="w-full max-w-md bg-yellow-50 p-8 rounded-2xl shadow-xl">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Register</h2>
 
         <form onSubmit={formSubmit} className="space-y-5">
@@ -144,7 +144,7 @@ const Register = () => {
               value={inputValue.username}
               onChange={inputChangeHandle}
               placeholder="Enter your username"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600"
+              className={`w-full px-4 py-2 border ${errors.username ? "border-red-600" : "border-gray-300"} rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500`}
             />
             {errors.username && <span className="text-red-600 text-sm">{errors.username}</span>}
           </div>
@@ -158,7 +158,7 @@ const Register = () => {
               value={inputValue.email}
               onChange={inputChangeHandle}
               placeholder="Enter your email"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600"
+              className={`w-full px-4 py-2 border ${errors.email ? "border-red-600" : "border-gray-300"} rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500`}
             />
             {errors.email && <span className="text-red-600 text-sm">{errors.email}</span>}
             {apiError && <div className="text-red-600 text-sm mt-1">{apiError}</div>}
@@ -168,12 +168,12 @@ const Register = () => {
           <div>
             <label className="block text-gray-700 font-semibold mb-1">Mobile No</label>
             <input
-              type="number"
+              type="tel"
               name="mobile"
               value={inputValue.mobile}
               onChange={inputChangeHandle}
               placeholder="Enter your mobile number"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600"
+              className={`w-full px-4 py-2 border ${errors.mobile ? "border-red-600" : "border-gray-300"} rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500`}
             />
             {errors.mobile && <span className="text-red-600 text-sm">{errors.mobile}</span>}
           </div>
@@ -187,7 +187,7 @@ const Register = () => {
               value={inputValue.password}
               onChange={inputChangeHandle}
               placeholder="Enter your password"
-              className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600"
+              className={`w-full px-4 py-2 pr-10 border ${errors.password ? "border-red-600" : "border-gray-300"} rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500`}
             />
             <span
               onClick={togglePasswordVisibility}
@@ -207,7 +207,7 @@ const Register = () => {
               value={inputValue.confirmPass}
               onChange={inputChangeHandle}
               placeholder="Confirm your password"
-              className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-600"
+              className={`w-full px-4 py-2 pr-10 border ${errors.confirmPass ? "border-red-600" : "border-gray-300"} rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500`}
             />
             <span
               onClick={toggleConfirmPasswordVisibility}
@@ -221,7 +221,9 @@ const Register = () => {
           {/* Register Button */}
           <button
             type="submit"
-            className="w-full py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-semibold rounded-lg transition duration-200"
+            // className="w-full py-2 bg-gradient-to-r from-indigo-600 to-pink-600 hover:from-indigo-700 hover:to-pink-700 text-white font-semibold rounded-lg transition duration-200"
+            className="w-full py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-800 hover:to-blue-700 text-white font-semibold rounded-lg transition duration-200"
+
           >
             Register
           </button>
@@ -231,7 +233,7 @@ const Register = () => {
           Already have an account?{" "}
           <span
             onClick={() => navigate("/login")}
-            className="text-cyan-700 font-bold cursor-pointer hover:underline"
+            className="text-indigo-700 font-bold cursor-pointer hover:underline"
           >
             Sign in
           </span>

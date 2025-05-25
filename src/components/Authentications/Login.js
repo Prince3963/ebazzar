@@ -59,8 +59,8 @@ const Login = () => {
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gradient-to-r from-cyan-800 to-blue-900 px-4'>
-      <div className='w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl'>
+    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 via-blue-200 to-indigo-400 px-4'>
+      <div className='w-full max-w-md bg-yellow-50 backdrop-blur-md rounded-xl shadow-lg p-8'>
         <h2 className='text-3xl font-bold text-center text-gray-800 mb-6'>Login</h2>
 
         <form onSubmit={formSubmit} className='space-y-5'>
@@ -104,7 +104,7 @@ const Login = () => {
 
           <button
             type='submit'
-            className="w-full py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-semibold rounded-lg transition duration-200"
+            className="w-full py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-800 hover:to-blue-700 text-white font-semibold rounded-lg transition duration-200"
           >
             Login
           </button>

@@ -3,8 +3,11 @@ import { Link } from 'react-router-dom';
 
 function Sidebar() {
   return (
-    <div className="w-64 h-screen bg-gradient-to-b from-cyan-800 to-blue-900 text-white p-6 space-y-6 shadow-lg">
-      <h1 className="text-2xl font-bold text-center mb-6 border-b border-cyan-500 pb-2">Admin Panel</h1>
+    <div className="w-64 h-screen bg-gradient-to-b from-blue-400 via-white to-indigo-400  p-6 space-y-6 shadow-lg">
+{/* <div className='min-h-screen bg-gradient-to-br from-blue-100 via-white to-indigo-200 px-4'> */}
+  <h1 className="text-2xl font-bold text-center mb-6 pb-2 border-b-2 border-cyan-500 inline-block mx-auto">
+    Admin Panel
+  </h1>
 
       <nav className="flex flex-col gap-2">
         <Link
