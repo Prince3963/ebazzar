@@ -20,6 +20,7 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
             <th className="p-2">Price</th>
             <th className="p-2">Category ID</th>
             <th className="p-2">Actions</th>
+            {/* <th className='p-2' /> In stoke */}
           </tr>
         </thead>
         <tbody>
@@ -50,6 +51,7 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
                   Delete
                 </button>
               </td>
+              {/* <td className='p-2'/>{product.} */}
             </tr>
           ))}
         </tbody>
@@ -57,7 +59,7 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
 
       <Pagination
         totalPagePost={products.length}
-        postPerPage={postPerPage} // ✅ fixed naming
+        postPerPage={postPerPage} 
         setCurrentPage={setCurrentPage}
       />
     </>

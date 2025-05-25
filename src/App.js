@@ -2,9 +2,7 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Headers/Navbar';
 import Footer from './components/Footers/Footer';
-
 import Home from './components/Headers/Home';
-
 import Login from './components/Authentications/Login';
 import Sidebar from './components/Admin/Sidebar';
 import Product from './components/Admin/Product/Product';
@@ -20,6 +18,11 @@ import ForgotPassword from './components/Authentications/ForgotPassword'
 import ResetPassword from './components/Authentications/ResetPassword'
 import Electronic from './components/User/Electronic';
 import ProductDetails from './components/User/ProductDetails';
+import TermsOfService from './components/Footers/TermsOfService';
+import PrivacyPolicy from './components/Footers/PrivacyPolicy';
+import Disclaimer from './components/Footers/Disclaimer';
+import AppDownload from './components/Footers/AppDownload';
+import Contact from './components/Footers/Contact';
 
 function App() {
   return (
@@ -67,6 +70,11 @@ function AppContent() {
         <Route path='/product/:id' element={<PublicRoute element={<ProductDetails />} />} />
         <Route path="/home" element={<PublicRoute element={<Home />} />} />
         <Route path="/about" element={<PublicRoute element={<About />} />} />
+        <Route path="/terms" element={<PublicRoute element={<TermsOfService />} />} />
+        <Route path="/privacy" element={<PublicRoute element={<PrivacyPolicy />} />} />
+        <Route path="/disclaimer" element={<PublicRoute element={<Disclaimer />} />} />
+        <Route path="/app" element={<PublicRoute element={<AppDownload />} />} />
+        <Route path="/contact" element={<PublicRoute element={<Contact />} />} />
         <Route path="/profile" element={<PublicRoute element={<Profile />} />} />
         <Route path="/electronic" element={<PublicRoute element={<Electronic />} />} />
 

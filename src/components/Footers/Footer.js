@@ -1,6 +1,7 @@
 import React from "react";
 import { FaFacebook, FaLinkedin, FaInstagram } from "react-icons/fa";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
+import { Link } from "react-router-dom"; // Import Link for routing
 
 const Footer = () => {
   // Footer sections data
@@ -23,19 +24,18 @@ const Footer = () => {
 
   const contactLinks = [
     { name: "Physical Address", link: "/contact" },
-    { name: "Email Address", link: "mailto:support@example.com" },
-    { name: "Contact Number", link: "tel:+123456789" },
+    { name: "Email Address", link: "/contact" },
+    { name: "Contact Number", link: "/contact" },
   ];
 
   const appDownloadLinks = [
-    { name: "Google Play", link: "https://play.google.com/store/apps/details?id=com.yourapp", icon: <FaGooglePlay size={36} /> },
-    { name: "App Store", link: "https://apps.apple.com/us/app/yourapp/idXXXXXXXXX", icon: <FaApple size={36} /> },
+    { name: "Google Play", link: "/app", icon: <FaGooglePlay size={36} /> },
+    { name: "App Store", link: "/app", icon: <FaApple size={36} /> },
   ];
 
   return (
     <footer className="bg-gradient-to-b from-[#131A22] to-[#1f2937] text-white py-10">
       <div className="max-w-7xl mx-auto px-6">
-
         <div className="flex justify-between flex-wrap mb-8">
 
           {/* Legal Section */}
@@ -44,7 +44,7 @@ const Footer = () => {
             <ul className="space-y-3 text-sm text-gray-300">
               {legalLinks.map((item, i) => (
                 <li key={i}>
-                  <a href={item.link} className="hover:text-teal-500 transition-all">{item.name}</a>
+                  <Link to={item.link} className="hover:text-teal-500 transition-all">{item.name}</Link>
                 </li>
               ))}
             </ul>
@@ -82,7 +82,7 @@ const Footer = () => {
             <ul className="space-y-3 text-sm text-gray-300">
               {companyLinks.map((item, i) => (
                 <li key={i}>
-                  <a href={item.link} className="hover:text-teal-500 transition-all">{item.name}</a>
+                  <Link to={item.link} className="hover:text-teal-500 transition-all">{item.name}</Link>
                 </li>
               ))}
             </ul>
@@ -100,11 +100,10 @@ const Footer = () => {
             </ul>
           </div>
         </div>
-
       </div>
 
       <div className="mt-12 flex justify-center items-center gap-4 border-t border-gray-700 pt-6">
-        <p className="text-sm text-gray-400">© 2025 Company Name. All rights reserved.</p>
+        <p className="text-sm text-gray-400">© 2025 eBazzar. All rights reserved.</p>
       </div>
     </footer>
   );

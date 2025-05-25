@@ -68,7 +68,6 @@ const ProductForm = ({ product, onClose, onRefresh }) => {
             form.append("product_price", formData.product_price);
         }
 
-        // Use the right API URL depending on whether the product exists
         const url = product
             ? `https://localhost:7219/api/Product/updateProduct/${product.product_id}`
             : "https://localhost:7219/api/Product/addProduct";

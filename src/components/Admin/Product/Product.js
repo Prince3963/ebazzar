@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import axios from 'axios';
 import Sidebar from '../Sidebar';
 import ProductTable from './ProductTable';
@@ -24,7 +24,7 @@ const Product = () => {
 
   const handleAddClick = () => {
     setEditingProduct(null);
-    setShowForm(true);
+    setShowForm(true); 
   };
 
   const handleEdit = (product) => {
@@ -33,17 +33,26 @@ const Product = () => {
   };
 
   const handleDelete = async (id) => {
-  try {
-    await axios.delete(`https://localhost:7219/api/Product/deleteProduct/${id}`, {
-      data: { product_id: id }, // sending body data
-      headers: { 'Content-Type': 'application/json' }
-    });
-    fetchProducts(); // Refresh product list
-  } catch (error) {
-    console.error("Error deleting product:", error);
-  }
-};
+    try {
+      await axios.delete(`https://localhost:7219/api/Product/deleteProduct/${id}`, {
+        data: { product_id: id }, 
+        headers: { 'Content-Type': 'application/json' }
+      });
+      fetchProducts(); // Refresh product list
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
 
+  const handleStatusToggle = (productId, newStatus) => {
+    setProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product.product_id === productId
+          ? { ...product, product_isActive: newStatus }
+          : product
+      )
+    );
+  };
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br text-cyan800">
@@ -65,6 +74,7 @@ const Product = () => {
             products={[...products].reverse()}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onStatusToggle={handleStatusToggle}
           />
         </div>
 
