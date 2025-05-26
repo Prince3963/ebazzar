@@ -15,7 +15,7 @@ const Navbar = () => {
         <li><Link to="/about">About</Link></li>
 
         {loggedIn && <li><Link to="/profile">Profile</Link></li>}
-        {loggedIn && <li><Link to="/electronic"> Electronic</Link></li>}
+        <li><Link to="/electronic"> Electronic</Link></li>
 
         <div className='ml-auto mr-4'>
           {loggedIn ? (

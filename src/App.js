@@ -13,7 +13,7 @@ import About from './components/Headers/About';
 import Order from './components/Admin/Order';
 import Register from './components/Authentications/Register';
 import UserDashboard from './components/User/UserDashboard';
-import Profile from './components/Headers/Profile';
+import UserProfile from './components/Headers/UserProfile';
 import ForgotPassword from './components/Authentications/ForgotPassword'
 import ResetPassword from './components/Authentications/ResetPassword'
 import Electronic from './components/User/Electronic';
@@ -75,7 +75,7 @@ function AppContent() {
         <Route path="/disclaimer" element={<PublicRoute element={<Disclaimer />} />} />
         <Route path="/app" element={<PublicRoute element={<AppDownload />} />} />
         <Route path="/contact" element={<PublicRoute element={<Contact />} />} />
-        <Route path="/profile" element={<PublicRoute element={<Profile />} />} />
+        <Route path="/profile" element={<PublicRoute element={<UserProfile />} />} />
         <Route path="/electronic" element={<PublicRoute element={<Electronic />} />} />
 
         {/* Authentication */}

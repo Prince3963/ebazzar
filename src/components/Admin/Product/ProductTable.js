@@ -20,7 +20,7 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
             <th className="p-2">Price</th>
             <th className="p-2">Category ID</th>
             <th className="p-2">Actions</th>
-            {/* <th className='p-2' /> In stoke */}
+            <th className='p-2' /> In stoke
           </tr>
         </thead>
         <tbody>

@@ -23,7 +23,7 @@ const UserDashboard = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 via-blue-200 to-indigo-400 px-4">
       <div className="max-w-screen-xl mx-auto">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 text-center mb-10">
+        <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 text-center mt-6 mb-10">
           Explore Our Product Store
         </h1>
 

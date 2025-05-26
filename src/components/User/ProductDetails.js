@@ -26,14 +26,14 @@ const ProductDetails = () => {
   if (!product) return <div className="p-4 text-gray-500">No product found.</div>;
 
   return (
-    <div className="max-w-screen-lg mx-auto p-6">
-      <div className="flex flex-col md:flex-row gap-8">
+        <div className="min-h-screen flex bg-gradient-to-br from-blue-400 via-blue-200 to-indigo-400 px-4">
+      <div className="flex flex-col md:w-2/4 md:flex-row mt-10 ml-6 gap-8">
         {/* Image Section */}
-        <div className="md:w-1/2">
+        <div className=" rounded-lg border ">
           <img
             src={product.product_imageURL }
             alt={product.product_name}
-            className="w-full h-96 object-cover rounded-lg shadow-lg"
+            className="min-w-full h-96 object-cover rounded-lg shadow-lg"
           />
         </div>
 
