@@ -1,20 +1,87 @@
-import React, { useEffect, useState } from "react";
+// UserDashboard.jsx
+
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import Pagination from "./Pagination";
 import { useNavigate } from "react-router-dom";
+import { CartContext } from "./CartContext";
+
+const getCookie = (cookieName) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${cookieName}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+  return null;
+};
 
 const UserDashboard = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postPerPage] = useState(8);
+  const { addToCart } = useContext(CartContext);
 
   useEffect(() => {
-    axios
-      .get("https://localhost:7219/api/Product/viewProduct")
-      .then((res) => setProducts(res.data))
-      .catch((err) => console.error("API Error:", err));
+    const fetchProductsAndMergeCart = async () => {
+      try {
+        const res = await axios.get("https://localhost:7219/api/Product/viewProduct");
+        setProducts(res.data);
+
+        const token = getCookie("token");
+        const guestCartRaw = localStorage.getItem("guest_cart");
+        const guestCart = guestCartRaw ? JSON.parse(guestCartRaw) : [];
+
+        if (token && guestCart.length > 0) {
+          const payload = guestCart.map((item) => ({
+            productId: item.product_id || item.productId,
+            quantity: item.quantity,
+          }));
+
+          await axios.post("https://localhost:7219/api/Cart/merge", payload, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          localStorage.removeItem("guest_cart");
+        }
+      } catch (err) {
+        console.error("Error fetching products or merging cart:", err);
+      }
+    };
+
+    fetchProductsAndMergeCart();
   }, []);
+
+  const handleAddToCart = async (product) => {
+    const token = getCookie("token");
+
+    if (token) {
+      try {
+        await axios.post(
+          "https://localhost:7219/api/Cart/add",
+          { productId: product.product_id, quantity: 1 },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        alert("Product added to cart!");
+        navigate("/cart");
+      } catch (error) {
+        console.error("Error adding to cart:", error);
+        alert("Failed to add product to cart.");
+      }
+    } else {
+      addToCart({
+        productId: product.product_id,
+        quantity: 1,
+        product_name: product.product_name,
+        product_price: product.product_price,
+        product_imageURL: product.product_imageURL,
+      });
+      alert("Product added to guest cart!");
+    }
+  };
 
   const lastPostIndex = currentPage * postPerPage;
   const firstPostIndex = lastPostIndex - postPerPage;
@@ -31,10 +98,10 @@ const UserDashboard = () => {
           {currentPost.map((product) => (
             <div
               key={product.product_id}
-              className="bg-yellow-50 backdrop-blur-md rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-400 flex flex-col"
+              className="bg-yellow-50 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-400 flex flex-col"
             >
               <img
-                src={product.product_imageURL || "https://via.placeholder.com/400x250?text=No+Image"}
+                src={product.product_imageURL}
                 alt={product.product_name}
                 loading="lazy"
                 className="w-full h-48 object-cover rounded-t-xl"
@@ -52,10 +119,17 @@ const UserDashboard = () => {
                       ₹{product.product_price}
                     </span>
                     <button
-                      onClick={() => navigate(`/product/${product.product_id}`)} // Navigate to ProductDetails page
+                      onClick={() => navigate(`/product/${product.product_id}`)}
                       className="py-2 px-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white rounded-lg transition duration-200"
                     >
                       View Details
+                    </button>
+
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="mt-2 py-2 px-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm"
+                    >
+                      Add to Cart
                     </button>
                   </div>
 

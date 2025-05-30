@@ -23,6 +23,7 @@ import PrivacyPolicy from './components/Footers/PrivacyPolicy';
 import Disclaimer from './components/Footers/Disclaimer';
 import AppDownload from './components/Footers/AppDownload';
 import Contact from './components/Footers/Contact';
+import CartPage from './components/User/CartPage';
 
 function App() {
   return (
@@ -67,7 +68,7 @@ function AppContent() {
       <Routes>
         {/* Public Pages */}
         <Route path='/' element={<PublicRoute element={<UserDashboard />} />} />
-        <Route path='/product/:id' element={<PublicRoute element={<ProductDetails />} />} />
+        <Route path='/product/:id' element={<ProductDetails />} />
         <Route path="/home" element={<PublicRoute element={<Home />} />} />
         <Route path="/about" element={<PublicRoute element={<About />} />} />
         <Route path="/terms" element={<PublicRoute element={<TermsOfService />} />} />
@@ -75,8 +76,9 @@ function AppContent() {
         <Route path="/disclaimer" element={<PublicRoute element={<Disclaimer />} />} />
         <Route path="/app" element={<PublicRoute element={<AppDownload />} />} />
         <Route path="/contact" element={<PublicRoute element={<Contact />} />} />
-        <Route path="/profile" element={<PublicRoute element={<UserProfile />} />} />
-        <Route path="/electronic" element={<PublicRoute element={<Electronic />} />} />
+        <Route path="/profile" element={<PrivateRoute element={<UserProfile />} />} />
+        <Route path="/electronic" element={<Electronic />}  />
+        <Route path='/cart' element={< CartPage/>}/>
 
         {/* Authentication */}
         <Route path="/login" element={<PublicRoute element={<Login />} />} />
@@ -101,6 +103,63 @@ function AppContent() {
 }
 
 
-// Edit Footer
+// import React, { useEffect, useState } from "react";
+// import axios from "axios";
+
+// const CartPage = () => {
+//     const [cartItems, setCartItems] = useState([]);
+//     const wishlistId = localStorage.getItem("wishlistId");
+
+
+//     const fetchData = () => {
+
+//         axios
+//             .get(`https://localhost:7219/api/Cart/wishlist`)
+//             .then((res) => setCartItems(res.data))
+//             .catch((err) => console.error("Cart Load Error:", err));
+//     }
+
+
+//     useEffect(() => {
+//         fetchData()
+//     }, [wishlistId]);
+//     const handleQuantityChange = async (cartItemId, quantity) => {
+//         // You’ll implement PUT API to update quantity
+//         // This is just a UI sample
+//         setCartItems((prev) =>
+//             prev.map((item) =>
+//                 item.cartItemId === cartItemId ? { ...item, quantity } : item
+//             )
+//         );
+//     };
+
+//     return (
+//         <div className="p-6">
+//             <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
+//             {cartItems.map((item) => (
+//                 <div
+//                     key={item.cartItmeId}
+//                     className="border p-4 mb-3 rounded-lg flex justify-between items-center"
+//                 >
+//                     <div>
+//                         <p>Product ID: {item.product_id}</p>
+//                         <p>Quantity: {item.quantity}</p>
+//                         <input
+//                             type="number"
+//                             min="1"
+//                             value={item.quantity}
+//                             onChange={(e) =>
+//                                 handleQuantityChange(item.cartItmeId, parseInt(e.target.value))
+//                             }
+//                             className="border rounded px-2 py-1 w-20"
+//                         />
+//                     </div>
+//                 </div>
+//             ))}
+//         </div>
+//     );
+// };
+
+// export default CartPage;
 
 export default App;
