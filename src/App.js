@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Headers/Navbar';
 import Footer from './components/Footers/Footer';
 import Home from './components/Headers/Home';
@@ -7,15 +7,15 @@ import Login from './components/Authentications/Login';
 import Sidebar from './components/Admin/Sidebar';
 import Product from './components/Admin/Product/Product';
 import Dashboard from './components/Admin/Dashboard';
-import LandingPage from './components/LandingPage';
-import Customer from './components/Admin/Coustomer/Customer'; // Corrected "Coustomer" to "Customer"
+import LandingPage from './components/User/LandingPage';
+import Customer from './components/Admin/Coustomer/Customer';
 import About from './components/Headers/About';
 import Order from './components/Admin/Order';
 import Register from './components/Authentications/Register';
 import UserDashboard from './components/User/UserDashboard';
 import UserProfile from './components/Headers/UserProfile';
-import ForgotPassword from './components/Authentications/ForgotPassword'
-import ResetPassword from './components/Authentications/ResetPassword'
+import ForgotPassword from './components/Authentications/ForgotPassword';
+import ResetPassword from './components/Authentications/ResetPassword';
 import Electronic from './components/User/Electronic';
 import ProductDetails from './components/User/ProductDetails';
 import TermsOfService from './components/Footers/TermsOfService';
@@ -23,7 +23,8 @@ import PrivacyPolicy from './components/Footers/PrivacyPolicy';
 import Disclaimer from './components/Footers/Disclaimer';
 import AppDownload from './components/Footers/AppDownload';
 import Contact from './components/Footers/Contact';
-import CartPage from './components/User/CartPage';
+import Cart from './components/Headers/Cart.js';
+import { useEffect, useState } from 'react';
 
 function App() {
   return (
@@ -36,28 +37,29 @@ function App() {
 }
 
 function AppContent() {
-  // Utility to get cookie value
-  const getCookie = (userCookie) => {
+  const locationPath = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Get token from cookie
+  const getCookie = (cookieName) => {
     const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${userCookie}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
+    const parts = value.split(`; ${cookieName}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
     return null;
   };
 
-  // Check if user is logged in
-  const validAuth = () => {
-    const userToken = getCookie("token");
-    return userToken !== null;
-  };
+  // Dynamically check for token on route change
+  useEffect(() => {
+    const token = getCookie("token");
+    setIsLoggedIn(!!token); // true if token exists
+  }, [locationPath]);
 
-  const isLoggedIn = validAuth();
-
-  // PublicRoute
+  // Public route logic
   const PublicRoute = ({ element }) => {
     return !isLoggedIn ? element : <Navigate to="/user/userDashboard" />;
   };
 
-  // PrivateRoute
+  // Private route logic
   const PrivateRoute = ({ element }) => {
     return isLoggedIn ? element : <Navigate to="/" />;
   };
@@ -67,18 +69,17 @@ function AppContent() {
       <Navbar />
       <Routes>
         {/* Public Pages */}
-        <Route path='/' element={<PublicRoute element={<UserDashboard />} />} />
-        <Route path='/product/:id' element={<ProductDetails />} />
+        <Route path="/" element={<PublicRoute element={<LandingPage />} />} />
         <Route path="/home" element={<PublicRoute element={<Home />} />} />
-        <Route path="/about" element={<PublicRoute element={<About />} />} />
-        <Route path="/terms" element={<PublicRoute element={<TermsOfService />} />} />
-        <Route path="/privacy" element={<PublicRoute element={<PrivacyPolicy />} />} />
-        <Route path="/disclaimer" element={<PublicRoute element={<Disclaimer />} />} />
-        <Route path="/app" element={<PublicRoute element={<AppDownload />} />} />
-        <Route path="/contact" element={<PublicRoute element={<Contact />} />} />
-        <Route path="/profile" element={<PrivateRoute element={<UserProfile />} />} />
-        <Route path="/electronic" element={<Electronic />}  />
-        <Route path='/cart' element={< CartPage/>}/>
+        <Route path="/order" element={<PublicRoute element={<Order />} />} />
+        <Route path="/terms" element={<TermsOfService />}  />
+        <Route path="/privacy" element={<PrivacyPolicy />}  />
+        <Route path="/disclaimer" element={<Disclaimer />}  />
+        <Route path="/app" element={<AppDownload />}  />
+        <Route path="/contact" element={<Contact />}  />
+        <Route path="/about" element={<About />}  />
+        <Route path="/cart" element={<Cart/>} />
+        <Route path="/electronic" element={<Electronic />} />
 
         {/* Authentication */}
         <Route path="/login" element={<PublicRoute element={<Login />} />} />
@@ -88,78 +89,19 @@ function AppContent() {
 
         {/* User Pages */}
         <Route path="/user/userDashboard" element={<PrivateRoute element={<UserDashboard />} />} />
+        <Route path="/profile" element={<PrivateRoute element={<UserProfile />} />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
 
         {/* Admin Pages */}
         <Route path="/admin/sidebar" element={<PublicRoute element={<Sidebar />} />} />
         <Route path="/admin" element={<PublicRoute element={<Dashboard />} />} />
         <Route path="/admin/product" element={<PublicRoute element={<Product />} />} />
         <Route path="/admin/order" element={<PublicRoute element={<Order />} />} />
-        <Route path="/admin/coustomer" element={<PublicRoute element={<Customer />} />} />        
-      </Routes>  
+        <Route path="/admin/customer" element={<PublicRoute element={<Customer />} />} />
+      </Routes>
       <Footer />
-      
     </>
   );
 }
-
-
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-
-// const CartPage = () => {
-//     const [cartItems, setCartItems] = useState([]);
-//     const wishlistId = localStorage.getItem("wishlistId");
-
-
-//     const fetchData = () => {
-
-//         axios
-//             .get(`https://localhost:7219/api/Cart/wishlist`)
-//             .then((res) => setCartItems(res.data))
-//             .catch((err) => console.error("Cart Load Error:", err));
-//     }
-
-
-//     useEffect(() => {
-//         fetchData()
-//     }, [wishlistId]);
-//     const handleQuantityChange = async (cartItemId, quantity) => {
-//         // You’ll implement PUT API to update quantity
-//         // This is just a UI sample
-//         setCartItems((prev) =>
-//             prev.map((item) =>
-//                 item.cartItemId === cartItemId ? { ...item, quantity } : item
-//             )
-//         );
-//     };
-
-//     return (
-//         <div className="p-6">
-//             <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
-//             {cartItems.map((item) => (
-//                 <div
-//                     key={item.cartItmeId}
-//                     className="border p-4 mb-3 rounded-lg flex justify-between items-center"
-//                 >
-//                     <div>
-//                         <p>Product ID: {item.product_id}</p>
-//                         <p>Quantity: {item.quantity}</p>
-//                         <input
-//                             type="number"
-//                             min="1"
-//                             value={item.quantity}
-//                             onChange={(e) =>
-//                                 handleQuantityChange(item.cartItmeId, parseInt(e.target.value))
-//                             }
-//                             className="border rounded px-2 py-1 w-20"
-//                         />
-//                     </div>
-//                 </div>
-//             ))}
-//         </div>
-//     );
-// };
-
-// export default CartPage;
 
 export default App;

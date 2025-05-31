@@ -42,12 +42,12 @@ const Login = () => {
     axios.post('https://localhost:7219/login', formData)
       .then((res) => {
         if (res.data.data !== "0") {
+          
+          navigate('/user/userDashboard');
           loginUser(res.data.data);
           console.log(res.data);
           
           setInputValue({ email: '', password: '' });
-          navigate('/user/userDashboard');
-          // window.location.reload();
         } else {
           alert("Login failed. Please try again.");
         }

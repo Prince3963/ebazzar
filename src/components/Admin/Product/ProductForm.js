@@ -51,11 +51,11 @@ const ProductForm = ({ product, onClose, onRefresh }) => {
         e.preventDefault();
 
         const form = new FormData();
-        const fileInput = document.getElementById("product_image"); // Change to correct input ID for image
+        const fileInput = document.getElementById("product_image"); 
 
         // Make sure fileInput is valid and has files
         if (fileInput && fileInput.files && fileInput.files.length > 0) {
-    form.append("product_image", fileInput.files[0]); // ✅ This is correct
+    form.append("product_image", fileInput.files[0]); 
         }
 
         // Append other form data
@@ -122,8 +122,8 @@ const ProductForm = ({ product, onClose, onRefresh }) => {
 
 
                     <div className="flex justify-end space-x-2">
-                        <button type="button" className="px-4 py-2 hover:bg-yellow-600 bg-gray-300 rounded" onClick={onClose}>Cancel</button>
                         <button type="submit" className="px-4 py-2 hover:bg-yellow-600 bg-blue-600 text-white rounded">Save</button>
+                        <button type="button" className="px-4 py-2 hover:bg-yellow-600 bg-gray-300 rounded" onClick={onClose}>Cancel</button>
                     </div>
                 </form>
             </div>

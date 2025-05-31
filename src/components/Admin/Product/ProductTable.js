@@ -1,13 +1,34 @@
 import React, { useState } from 'react';
-import Pagination from '../../User/Pagination'; // Make sure path is correct
+import Pagination from '../../User/Pagination';
+import axios from 'axios';
 
-const ProductTable = ({ products, onEdit, onDelete }) => {
-  const [currentPage, setCurrentPage] = useState(1);
+const ProductTable = ({ products, onEdit, onDelete, fetchProductsForUser }) => {
   const postPerPage = 8;
+  const [currentPage, setCurrentPage] = useState(1);
 
   const lastPostIndex = currentPage * postPerPage;
   const firstPostIndex = lastPostIndex - postPerPage;
   const currentPost = products.slice(firstPostIndex, lastPostIndex);
+
+  const handleStatusToggle = async (productId, currentStatus) => {
+    const newStatus = currentStatus === 'true' ? 'false' : 'true'; // Toggle between active/inactive
+    try {
+      // Call the backend API to update the product's status
+      const response = await axios.patch(
+        `https://localhost:7219/api/Product/updateProductStatus/${productId}`,
+        { product_isActive: newStatus } // Send the new status
+      );
+
+      if (response.status === 200) {
+        
+        fetchProductsForUser(); 
+      } else {
+        console.error("Failed to update product status.");
+      }
+    } catch (error) {
+      console.error("Error updating product status:", error);
+    }
+  };
 
   return (
     <>
@@ -18,9 +39,9 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
             <th className="p-2">Name</th>
             <th className="p-2">Description</th>
             <th className="p-2">Price</th>
-            <th className="p-2">Category ID</th>
+            <th className="p-2">Category</th>
             <th className="p-2">Actions</th>
-            <th className='p-2' /> In stoke
+            <th className="p-2">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -38,20 +59,29 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
               <td className="p-2">{product.product_price}</td>
               <td className="p-2">{product.category_name}</td>
               <td className="p-2">
+                {/* Actions */}
                 <button
-                  className="text-blue-600 mr-2"
+                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-md p-2 mr-2"
                   onClick={() => onEdit(product)}
                 >
                   Edit
                 </button>
-                <button
+                {/* <button
                   className="text-red-600"
                   onClick={() => onDelete(product.product_id)}
                 >
                   Delete
+                </button> */}
+              </td>
+              <td className="p-2">
+                {/* Toggle button for active/inactive */}
+                <button
+                  className={`px-4 py-2 rounded ${product.product_isActive === 'true' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}
+                  onClick={() => handleStatusToggle(product.product_id, product.product_isActive)}
+                >
+                  {product.product_isActive === 'true' ? 'Active' : 'Inactive'}
                 </button>
               </td>
-              {/* <td className='p-2'/>{product.} */}
             </tr>
           ))}
         </tbody>
@@ -59,7 +89,7 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
 
       <Pagination
         totalPagePost={products.length}
-        postPerPage={postPerPage} 
+        postPerPage={postPerPage}
         setCurrentPage={setCurrentPage}
       />
     </>
