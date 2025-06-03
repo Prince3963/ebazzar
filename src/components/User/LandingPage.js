@@ -3,6 +3,8 @@ import axios from "axios";
 import Pagination from "./Pagination";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "./CartContext";
+import { ToastContainer, toast } from "react-toastify"; // Import toast
+import "react-toastify/dist/ReactToastify.css"; // Import the styles
 
 const getCookie = (cookieName) => {
   const value = `; ${document.cookie}`;
@@ -17,8 +19,8 @@ const LandingPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [postPerPage] = useState(8);
   const { addToCart } = useContext(CartContext);
-  const [loading, setLoading] = useState(true); // Loading state for fetching products
-  const [error, setError] = useState(null); // Error state
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
     const fetchProductsAndMergeCart = async () => {
@@ -70,28 +72,34 @@ const LandingPage = () => {
             },
           }
         );
-        // alert("Product added to cart!");
-        navigate("/cart");
+        toast.success("Product added to cart!");  // Show success toast
       } catch (error) {
         console.error("Error adding to cart:", error);
-        alert("Failed to add product to cart.");
+        toast.error("Failed to add product to cart.");  // Show error toast
       }
     } else {
-      
       // Handle guest cart update
       const guestCartRaw = localStorage.getItem("guest_cart");
-      const guestCart = guestCartRaw ? JSON.parse(guestCartRaw) : [];
-      
-      const updatedGuestCart = [...guestCart, {
-        productId: product.product_id,
-        quantity: 1, // By default, quantity will be 1
-        product_name: product.product_name,
-        product_price: product.product_price,
-        product_imageURL: product.product_imageURL,
-      }];
+      let guestCart = guestCartRaw ? JSON.parse(guestCartRaw) : [];
 
-      localStorage.setItem("guest_cart", JSON.stringify(updatedGuestCart));
-      // alert("Product added to guest cart!");
+      const existingIndex = guestCart.findIndex(
+        (item) => item.productId === product.product_id
+      );
+
+      if (existingIndex !== -1) {
+        guestCart[existingIndex].quantity += 1;
+      } else {
+        guestCart.push({
+          productId: product.product_id,
+          quantity: 1,
+          product_name: product.product_name,
+          product_price: product.product_price,
+          product_imageURL: product.product_imageURL,
+        });
+      }
+
+      localStorage.setItem("guest_cart", JSON.stringify(guestCart));
+      toast.success("Product added to cart!");  //success toast
     }
   };
 
@@ -106,8 +114,8 @@ const LandingPage = () => {
           Explore Our Product Store
         </h1>
 
-        {loading && <div>Loading...</div>}  {/* Show loading */}
-        {error && <div className="text-red-500">{error}</div>}  {/* Show error */}
+        {loading && <div>Loading...</div>}  
+        {error && <div className="text-red-500">{error}</div>}  
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {currentPost.map((product) => (
@@ -149,9 +157,6 @@ const LandingPage = () => {
                       Add to Cart
                     </button>
                   </div>
-                  {/* <span className="inline-block text-purple-700 bg-purple-100 text-xs font-medium px-2 py-1 rounded-full mt-2">
-                    {product.product_category || "Uncategorized"}
-                  </span> */}
                 </div>
               </div>
             </div>
@@ -166,6 +171,9 @@ const LandingPage = () => {
           />
         </div>
       </div>
+
+      {/* Add the ToastContainer */}
+      <ToastContainer />
     </div>
   );
 };

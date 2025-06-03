@@ -1,10 +1,36 @@
 import React, { useContext } from 'react';
 import { CartContext } from '../User/CartContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom'; 
+import { ToastContainer, toast } from "react-toastify"; // Import toast
+import "react-toastify/dist/ReactToastify.css"; // Import the styles
 
 function Cart() {
   const { cartItems, setCartItems } = useContext(CartContext);
+  const navigate = useNavigate(); // Initialize navigate for routing
 
-  // Function to update the quantity of a specific product
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+  };
+
+  const checkOutHandler = () => {
+    
+    const token = getCookie("token"); 
+
+    if (token) {
+      alert('Success! You are ready to checkout!');
+      console.log("Ho gaya  ");
+    } else {
+      toast("Please login and access it ");
+      navigate('/login'); 
+    }
+  };
+
+  // Update quantity
   const updateQuantity = (productId, operation) => {
     const updatedItems = cartItems.map(item => {
       if (item.productId === productId) {
@@ -16,20 +42,17 @@ function Cart() {
           updatedQuantity -= 1;
         }
 
-        // If quantity becomes 0, remove the product from the cart
         if (updatedQuantity === 0) {
-          return null; // Mark the item for removal
+          return null; // Remove quantity
         }
 
         return { ...item, quantity: updatedQuantity };
       }
       return item;
-    }).filter(item => item !== null); // Remove null items from the cart
+    }).filter(item => item !== null);
 
-    // Update cartItems state and localStorage after removal
     setCartItems(updatedItems);
 
-    // Remove the product from localStorage if it's removed from the cart
     if (updatedItems.length === 0) {
       localStorage.removeItem('cartItems');
     } else {
@@ -37,27 +60,31 @@ function Cart() {
     }
   };
 
-  // Calculate total amount for a single item
   const calculateItemTotal = (price, quantity) => {
     return price * quantity;
   };
 
-  // Calculate the overall total amount for the cart
   const calculateCartTotal = () => {
     return cartItems.reduce((total, item) => total + calculateItemTotal(item.product_price, item.quantity), 0);
   };
 
-  // Function to remove item from cart completely (on button click)
   const removeItem = (productId) => {
     const updatedItems = cartItems.filter(item => item.productId !== productId);
 
-    // Update cartItems state and localStorage after removal
     setCartItems(updatedItems);
     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
   };
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
+    <div className="p-8 bg-gray-50 min-h-screen relative">
+      
+      <button
+        onClick={() => navigate(-1)} 
+        className="absolute top-4 left-4 py-2 px-4 bg-indigo-500 text-white rounded-lg hover:bg-gray-600 transition duration-200"
+      >
+        &larr;
+      </button>
+
       <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Your Cart</h2>
 
       {cartItems.length === 0 ? (
@@ -67,61 +94,53 @@ function Cart() {
           {cartItems.map((item) => (
             <li
               key={item.productId}
-              className="bg-white rounded-lg shadow-lg p-6 flex items-center space-x-6"
+              className="bg-white rounded-lg shadow p-4 flex items-center gap-4"
             >
-              {/* Left side: Product Image */}
-              <div className="flex items-center space-x-6">
-                <img
-                  src={item.product_imageURL}
-                  alt={item.product_name}
-                  className="w-16 h-16 object-cover rounded"
-                />
+              {/* Image */}
+              <img
+                src={item.product_imageURL}
+                alt={item.product_name}
+                className="w-20 h-20 object-cover rounded"
+              />
+
+              {/* Product name and price */}
+              <div className="flex flex-col flex-1 justify-center">
+                <h3 className="text-lg font-semibold text-gray-900">{item.product_name}</h3>
+                <p className="text-sm text-gray-600 mt-1">₹{item.product_price.toFixed(2)}</p>
               </div>
 
-              {/* Middle: Name and Price on the same row */}
-              <div className="flex flex-col flex-1">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-semibold text-gray-900">{item.product_name}</h3>
-                  <p className="text-lg text-gray-600">₹{item.product_price}</p>
-                </div>
-              </div>
-
-              {/* Right side: Grouped div for quantity, total, and remove */}
-              <div className="flex items-center space-x-4">
-                {/* Quantity (with increment/decrement buttons) */}
-                <div className="flex items-center space-x-4">
-                  <button
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
-                    onClick={() => updateQuantity(item.productId, 'decrement')}
-                  >
-                    -
-                  </button>
-                  <span className="text-lg font-semibold text-gray-700">{item.quantity}</span>
-                  <button
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
-                    onClick={() => updateQuantity(item.productId, 'increment')}
-                  >
-                    +
-                  </button>
-                </div>
-
-                {/* Total Price for this product */}
-                <div className="text-lg font-semibold text-gray-900">
-                  ₹{calculateItemTotal(item.product_price, item.quantity).toFixed(2)}
-                </div>
-
-                {/* Remove button */}
+              {/* Quantity controls */}
+              <div className="flex items-center space-x-2">
                 <button
-                  onClick={() => removeItem(item.productId)}
-                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300"
+                  onClick={() => updateQuantity(item.productId, 'decrement')}
+                  className="w-8 h-8 bg-blue-500 text-white rounded-s-lg hover:bg-blue-600 flex justify-center items-center"
                 >
-                  Remove
+                  -
+                </button>
+                <span className="w-6 text-center font-semibold">{item.quantity}</span>
+                <button
+                  onClick={() => updateQuantity(item.productId, 'increment')}
+                  className="w-8 h-8 bg-blue-500 text-white rounded-e-lg hover:bg-blue-600 flex justify-center items-center"
+                >
+                  +
                 </button>
               </div>
+
+              {/* Item total price */}
+              <div className="w-24 text-right font-semibold text-gray-900">
+                ₹{calculateItemTotal(item.product_price, item.quantity).toFixed(2)}
+              </div>
+
+              {/* Remove button with icon */}
+              <button
+                onClick={() => removeItem(item.productId)}
+                className="w-8 h-8 flex justify-center items-center text-white bg-red-500 rounded hover:bg-red-600"
+              >
+                <FontAwesomeIcon icon={faTrash} size="sm" />
+              </button>
             </li>
           ))}
 
-          {/* Total amount for the cart */}
           <li className="bg-white rounded-lg shadow-lg p-6 flex items-center justify-between space-x-6 mt-6">
             <div className="flex items-center space-x-6 flex-1">
               <h3 className="text-xl font-semibold text-gray-900">Total Amount</h3>
@@ -132,6 +151,16 @@ function Cart() {
           </li>
         </ul>
       )}
+
+      <div className="flex justify-end">
+        <button
+          onClick={checkOutHandler} // Handle checkout click
+          className="p-4 mt-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-200"
+        >
+          Check out
+        </button>
+      </div>
+      <ToastContainer/>
     </div>
   );
 }

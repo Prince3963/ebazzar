@@ -26,6 +26,12 @@ import Contact from './components/Footers/Contact';
 import Cart from './components/Headers/Cart.js';
 import { useEffect, useState } from 'react';
 
+//ReactPrime 
+import 'primereact/resources/themes/lara-light-indigo/theme.css';  // Theme
+import 'primereact/resources/primereact.min.css';                  // Core Styles
+import 'primeicons/primeicons.css';                                // Icons
+
+
 function App() {
   return (
     <div className="App">
@@ -35,6 +41,8 @@ function App() {
     </div>
   );
 }
+
+
 
 function AppContent() {
   const locationPath = useLocation();

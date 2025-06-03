@@ -33,6 +33,7 @@ const ProductTable = ({ products, onEdit, onDelete, fetchProductsForUser }) => {
   return (
     <>
       <table className="w-full border mt-4">
+        
         <thead>
           <tr className="bg-gray-200 text-left">
             <th className="p-2">Image</th>
