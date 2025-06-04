@@ -19,7 +19,7 @@ const Footer = () => {
 
   const companyLinks = [
     { name: "About Us", link: "/about" },
-    { name: "Careers", link: "/careers" },
+    
   ];
 
   const contactLinks = [

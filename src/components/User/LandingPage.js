@@ -1,10 +1,14 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import Pagination from "./Pagination";
+
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "./CartContext";
-import { ToastContainer, toast } from "react-toastify"; // Import toast
-import "react-toastify/dist/ReactToastify.css"; // Import the styles
+import { ToastContainer, toast } from "react-toastify";
+import { Paginator } from "primereact/paginator";
+import "primereact/resources/themes/lara-light-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+import "react-toastify/dist/ReactToastify.css";
 
 const getCookie = (cookieName) => {
   const value = `; ${document.cookie}`;
@@ -16,22 +20,27 @@ const getCookie = (cookieName) => {
 const LandingPage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [postPerPage] = useState(8);
   const { addToCart } = useContext(CartContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(8);
 
   useEffect(() => {
     const fetchProductsAndMergeCart = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("https://localhost:7219/api/Product/viewProduct");
-        setProducts(res.data);
+        const res = await axios.get(
+          "https://localhost:7219/api/Product/viewProduct"
+        );
+        const activeProducts = res.data.filter(
+          (product) => product.product_isActive === "true"
+        );
+        setProducts(activeProducts);
 
         const guestCartRaw = localStorage.getItem("guest_cart");
         const guestCart = guestCartRaw ? JSON.parse(guestCartRaw) : [];
-
         const token = getCookie("token");
 
         if (token && guestCart.length > 0) {
@@ -45,11 +54,12 @@ const LandingPage = () => {
               Authorization: `Bearer ${token}`,
             },
           });
+
           localStorage.removeItem("guest_cart");
         }
       } catch (err) {
-        console.error("Error fetching products or merging cart:", err);
-        setError("Failed to load products or merge cart.");
+        // console.error("Error fetching products or merging cart:", err);
+        // setError("Failed to load products or merge cart.");
       } finally {
         setLoading(false);
       }
@@ -72,13 +82,12 @@ const LandingPage = () => {
             },
           }
         );
-        toast.success("Product added to cart!");  // Show success toast
+        toast.success("Product added to cart!");
       } catch (error) {
-        console.error("Error adding to cart:", error);
-        toast.error("Failed to add product to cart.");  // Show error toast
+        // console.error("Error adding to cart:", error);
+        // toast.error("Failed to add product to cart.");
       }
     } else {
-      // Handle guest cart update
       const guestCartRaw = localStorage.getItem("guest_cart");
       let guestCart = guestCartRaw ? JSON.parse(guestCartRaw) : [];
 
@@ -99,68 +108,63 @@ const LandingPage = () => {
       }
 
       localStorage.setItem("guest_cart", JSON.stringify(guestCart));
-      toast.success("Product added to cart!");  //success toast
+      toast.success("Product added to cart!");
     }
   };
 
-  const lastPostIndex = currentPage * postPerPage;
-  const firstPostIndex = lastPostIndex - postPerPage;
-  const currentPost = products.slice(firstPostIndex, lastPostIndex);
+  const start = currentPage * rowsPerPage;
+  const end = start + rowsPerPage;
+  const currentPost = products.slice(start, end);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 via-blue-200 to-indigo-400 px-4">
-      <div className="max-w-screen-xl mx-auto">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 text-center mt-6 mb-10">
-          Explore Our Product Store
+    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-white to-indigo-200 px-4 py-10">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-center text-gray-900 mt-10 mb-12 tracking-tight">
+          Discover Top Products in Our Store
         </h1>
 
-        {loading && <div>Loading...</div>}
-        {error && <div className="text-red-500">{error}</div>}
+        {loading && <div className="text-center text-lg">Loading...</div>}
+        {/* {error && <div className="text-red-500 text-center">{error}</div>} */}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
           {currentPost.map((product) => (
             <div
               key={product.product_id}
-              className="bg-yellow-50 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-400 flex flex-col"
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-[1.02] transition duration-300 ease-in-out border border-gray-200 flex flex-col"
             >
               <img
                 src={product.product_imageURL}
                 alt={product.product_name}
                 loading="lazy"
-                className="w-full h-48 object-cover rounded-t-xl"
+                className="w-full h-48 object-cover rounded-t-2xl"
               />
               <div className="p-4 flex flex-col flex-grow">
                 <h2
-                  className="text-lg font-semibold text-gray-800 mb-1 truncate cursor-pointer hover:text-blue-700"
+                  className="text-lg font-semibold text-gray-900 mb-1 truncate hover:text-blue-700 cursor-pointer transition duration-200"
                   onClick={() => navigate(`/product/${product.product_id}`)}
-                  title="Click to view details"
                 >
                   {product.product_name}
                 </h2>
                 <p
-                  className="text-sm text-gray-600 mb-3 line-clamp-3 cursor-pointer hover:text-blue-700"
+                  className="text-sm text-gray-600 mb-3 line-clamp-3 cursor-pointer"
                   onClick={() => navigate(`/product/${product.product_id}`)}
-                  title="Click to view details"
                 >
                   {product.product_description || "No description available."}
                 </p>
                 <div className="mt-auto">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-lg font-bold text-blue-700">
+                  <div className="flex flex-col gap-3">
+                    <span className="text-xl font-bold text-blue-600">
                       ₹{product.product_price}
-                      <div className="text-green-700">{product.category_name}</div> 
-
                     </span>
-
                     <button
                       onClick={() => handleAddToCart(product)}
-                      className="mt-2 py-2 px-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm"
+                      className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white text-base font-bold rounded-lg shadow-md transition duration-200"
                     >
                       Add to Cart
                     </button>
-                  </div>
-
-                  <div className="text-green-700">
+                    <div className="text-xs flex justify-center bg-blue-100 text-blue-800 font-medium px-3 py-1 rounded-full shadow-sm border border-blue-300 mt-1">
+                      {product.category_name}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -168,17 +172,23 @@ const LandingPage = () => {
           ))}
         </div>
 
-        <div className="mt-12 flex justify-center">
-          <Pagination
-            totalPagePost={Math.ceil(products.length / postPerPage)}
-            PostPerPage={postPerPage}
-            setCurrentPage={setCurrentPage}
+        <div className="flex justify-center mt-12">
+          <Paginator
+            first={currentPage * rowsPerPage}
+            rows={rowsPerPage}
+            totalRecords={products.length}
+            rowsPerPageOptions={[8, 12, 16]}
+            onPageChange={(e) => {
+              setCurrentPage(e.page);
+              setRowsPerPage(e.rows);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="w-full gap-2 bg-white shadow-md rounded-lg p-3"
           />
         </div>
       </div>
 
-      {/* Add the ToastContainer */}
-      <ToastContainer />
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 };

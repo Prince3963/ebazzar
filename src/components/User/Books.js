@@ -4,22 +4,25 @@ import { CartContext } from './CartContext';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import { Paginator } from "primereact/paginator";
-import "primereact/resources/themes/lara-light-blue/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
 
-function Cloth() {
+import { Paginator } from 'primereact/paginator';
+import 'primereact/resources/themes/lara-light-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+
+function Books() {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0); // zero-based index for paginator
-  const [rowsPerPage, setRowsPerPage] = useState(8);
   const { addToCart } = useContext(CartContext);
   const navigate = useNavigate();
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(8);
+
   useEffect(() => {
     axios
-      .get('https://localhost:7219/api/Product/getProductCategory/2') 
+      .get('https://localhost:7219/api/Product/getProductCategory/4') // Books category = 4
       .then((res) => {
         setProducts(res.data);
         setError(null);
@@ -85,7 +88,7 @@ function Cloth() {
     return null;
   };
 
-  // Pagination logic: slice products for current page
+  // Calculate current page slice
   const start = currentPage * rowsPerPage;
   const end = start + rowsPerPage;
   const currentProducts = products.slice(start, end);
@@ -94,7 +97,7 @@ function Cloth() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 via-blue-200 to-indigo-400 px-4">
       <div className="max-w-screen-xl mx-auto w-full">
         <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 text-center mt-6 mb-10">
-          Explore Our Cloth Products
+          Explore Our Books
         </h1>
 
         {error && <div className="text-red-500 text-center">{error}</div>}
@@ -161,7 +164,7 @@ function Cloth() {
             onPageChange={(e) => {
               setCurrentPage(e.page);
               setRowsPerPage(e.rows);
-              window.scrollTo({ top: 0, behavior: "smooth" });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             className="w-full gap-2 bg-white shadow-md rounded-lg p-3"
           />
@@ -173,4 +176,4 @@ function Cloth() {
   );
 }
 
-export default Cloth;
+export default Books;

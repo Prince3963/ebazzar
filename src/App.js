@@ -30,6 +30,8 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';  // Theme
 import 'primereact/resources/primereact.min.css';                  // Core Styles
 import 'primeicons/primeicons.css';                                // Icons
 import Cloth from './components/User/Cloth.js';
+import HomeAppliance from './components/User/HomeAppliances.js';
+import Books from './components/User/Books.js';
 
 
 function App() {
@@ -75,7 +77,7 @@ function AppContent() {
   return (
     <>
       <Navbar />
-      <Routes>
+      <Routes key={locationPath.pathname}>
         {/* Public Pages */}
         <Route path="/" element={<PublicRoute element={<LandingPage />} />} />
         <Route path="/home" element={<PublicRoute element={<Home />} />} />
@@ -89,6 +91,8 @@ function AppContent() {
         <Route path="/cart" element={<Cart/>} />
         <Route path="/electronic" element={<Electronic />} />
         <Route path="/cloth" element={<Cloth />} />
+        <Route path="/homeAppliance" element={<HomeAppliance />} />
+        <Route path="/books" element={<Books />} />
 
         {/* Authentication */}
         <Route path="/login" element={<PublicRoute element={<Login />} />} />

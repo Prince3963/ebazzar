@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import Pagination from "./Pagination";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "./CartContext";
-import { ToastContainer, toast } from "react-toastify"; // Import toast
-import "react-toastify/dist/ReactToastify.css"; // Import toast styles
+import { ToastContainer, toast } from "react-toastify"; 
+import { Paginator } from "primereact/paginator";
+import "primereact/resources/themes/lara-light-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+import "react-toastify/dist/ReactToastify.css";
 
 const getCookie = (cookieName) => {
   const value = `; ${document.cookie}`;
@@ -16,24 +19,20 @@ const getCookie = (cookieName) => {
 const UserDashboard = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [postPerPage] = useState(8);
+  const [currentPage, setCurrentPage] = useState(0); 
+  const [rowsPerPage, setRowsPerPage] = useState(16);
   const { addToCart, setCartItems } = useContext(CartContext);
-  const [loading, setLoading] = useState(true); // Loading state for fetching products
-  const [error, setError] = useState(null); // Error state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProductsAndMergeCart = async () => {
       try {
         setLoading(true);
-        // Fetching products from the API
         const res = await axios.get("https://localhost:7219/api/Product/viewProduct");
-
-        // Filtering only active products
-        const activeProducts = res.data.filter(product => product.product_isActive === 'true');
+        const activeProducts = res.data.filter(product => product.product_isActive === "true");
         setProducts(activeProducts);
 
-        // Merge guest cart with user cart
         const token = getCookie("token");
         const guestCartRaw = localStorage.getItem("guest_cart");
         const guestCart = guestCartRaw ? JSON.parse(guestCartRaw) : [];
@@ -48,132 +47,133 @@ const UserDashboard = () => {
             headers: { Authorization: `Bearer ${token}` },
           });
 
-          // Fetch updated cart
           const updatedCartRes = await axios.get("https://localhost:7219/api/Cart/view", {
             headers: { Authorization: `Bearer ${token}` },
           });
 
-          setCartItems(updatedCartRes.data);  // Update context with new cart items
+          setCartItems(updatedCartRes.data);
           localStorage.removeItem("guest_cart");
         }
       } catch (err) {
-        console.error("Error fetching products or merging cart:", err);
-        setError("Failed to load products or merge cart.");
+        // console.error("Error fetching products or merging cart:", err);
+        // setError("Failed to load products or merge cart.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchProductsAndMergeCart();
-  }, []);
+  }, [setCartItems]);
 
   const handleAddToCart = (product) => {
-    // Retrieve the existing guest cart from localStorage, or initialize an empty array
-    const guestCartRaw = localStorage.getItem("guest_cart");
-    const guestCart = guestCartRaw ? JSON.parse(guestCartRaw) : [];
+    const token = getCookie("token");
 
-    // Check if the product is already in the guest cart
-    const existingProductIndex = guestCart.findIndex(item => item.productId === product.product_id);
-
-    if (existingProductIndex >= 0) {
-      // If the product is already in the cart, update its quantity
-      guestCart[existingProductIndex].quantity += 1;
+    if (token) {
+      // User logged in, ideally call addToCart from context or api
+      addToCart(product.product_id, 1);
+      toast.success("Product added to cart!");
     } else {
-      // If the product is not in the cart, add a new item with quantity 1
-      guestCart.push({
-        productId: product.product_id,
-        quantity: 1, // Initial quantity is 1
-        product_name: product.product_name,
-        product_price: product.product_price,
-        product_imageURL: product.product_imageURL,
-      });
-    }
+      // Guest cart logic
+      const guestCartRaw = localStorage.getItem("guest_cart");
+      const guestCart = guestCartRaw ? JSON.parse(guestCartRaw) : [];
 
-    localStorage.setItem("guest_cart", JSON.stringify(guestCart));
-    toast.success("Product added to cart!"); // Show success toast for adding to cart
-    console.log("Updated Guest Cart:", guestCart);
+      const existingIndex = guestCart.findIndex(item => item.productId === product.product_id);
+
+      if (existingIndex >= 0) {
+        guestCart[existingIndex].quantity += 1;
+      } else {
+        guestCart.push({
+          productId: product.product_id,
+          quantity: 1,
+          product_name: product.product_name,
+          product_price: product.product_price,
+          product_imageURL: product.product_imageURL,
+        });
+      }
+
+      localStorage.setItem("guest_cart", JSON.stringify(guestCart));
+      toast.success("Product added to cart!");
+    }
   };
 
-  // Pagination logic
-  const lastPostIndex = currentPage * postPerPage;
-  const firstPostIndex = lastPostIndex - postPerPage;
-  const currentPost = products.slice(firstPostIndex, lastPostIndex);
+  // Pagination slice
+  const start = currentPage * rowsPerPage;
+  const end = start + rowsPerPage;
+  const currentPost = products.slice(start, end);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 via-blue-200 to-indigo-400 px-4">
-      <div className="max-w-screen-xl mx-auto">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 text-center mt-6 mb-10">
+    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-white to-indigo-200 px-4 py-10">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-center text-gray-900 mt-6 mb-12 tracking-tight">
           Explore Our Product Store
         </h1>
 
-        {loading && <div>Loading...</div>}  {/* Show loading */}
-        {/* {error && <div className="text-red-500">{error}</div>}  Show error */}
+        {loading && <div className="text-center text-lg">Loading...</div>}
+        {/* {error && <div className="text-red-600 text-center">{error}</div>} */}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {currentPost.map((product) => (
+        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+          {currentPost.map(product => (
             <div
               key={product.product_id}
-              className="bg-yellow-50 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-400 flex flex-col"
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-[1.02] transition duration-300 ease-in-out border border-gray-200 flex flex-col"
             >
               <img
                 src={product.product_imageURL}
                 alt={product.product_name}
                 loading="lazy"
-                className="w-full h-48 object-cover rounded-t-xl"
+                className="w-full h-48 object-cover rounded-t-2xl"
               />
               <div className="p-4 flex flex-col flex-grow">
-                {/* Product Name with Click Handler */}
                 <h2
-                  className="text-lg font-semibold text-gray-800 mb-1 truncate cursor-pointer hover:text-blue-700"
-                  onClick={() => navigate(`/product/${product.product_id}`)}  // View Details
-                  title="Click to view details"
+                  className="text-lg font-semibold text-gray-900 mb-1 truncate hover:text-blue-700 cursor-pointer transition duration-200"
+                  onClick={() => navigate(`/product/${product.product_id}`)}
+                  title="View product details"
                 >
                   {product.product_name}
                 </h2>
-
-                {/* Product Description with Click Handler */}
                 <p
                   className="text-sm text-gray-600 mb-3 line-clamp-3 cursor-pointer hover:text-blue-700"
-                  onClick={() => navigate(`/product/${product.product_id}`)}  // View Details
-                  title="Click to view details"
+                  onClick={() => navigate(`/product/${product.product_id}`)}
+                  title="View product details"
                 >
                   {product.product_description || "No description available."}
                 </p>
-
-                <div className="mt-auto">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-lg font-bold text-blue-700">
-                      ₹{product.product_price}
-                      <div className="text-green-700">{product.category_name}</div> 
-                    </span>
-
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      className="mt-2 py-2 px-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm"
-                    >
-                      Add to Cart
-                    </button>
+                <div className="mt-auto flex flex-col gap-3">
+                  <span className="text-xl font-bold text-blue-600">
+                    ₹{product.product_price}
+                  </span>
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white text-base font-bold rounded-lg shadow-md transition duration-200"
+                  >
+                    Add to Cart
+                  </button>
+                  <div className="text-xs flex justify-center bg-blue-100 text-blue-800 font-medium px-3 py-1 rounded-full shadow-sm border border-blue-300 mt-1">
+                    {product.category_name}
                   </div>
-
-                  
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Pagination Component */}
-        <div className="mt-12 flex justify-center">
-          <Pagination
-            totalPagePost={Math.ceil(products.length / postPerPage)}
-            PostPerPage={postPerPage}
-            setCurrentPage={setCurrentPage}
+        <div className="flex justify-center mt-12">
+          <Paginator
+            first={currentPage * rowsPerPage}
+            rows={rowsPerPage}
+            totalRecords={products.length}
+            rowsPerPageOptions={[16, 24, 30]}
+            onPageChange={(e) => {
+              setCurrentPage(e.page);
+              setRowsPerPage(e.rows);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="w-full gap-2 bg-white shadow-md rounded-lg p-3"
           />
         </div>
       </div>
 
-      {/* Add the ToastContainer here */}
-      <ToastContainer />
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 };

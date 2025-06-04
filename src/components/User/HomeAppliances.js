@@ -9,17 +9,17 @@ import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
-function Cloth() {
+function HomeAppliance() {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0); // zero-based index for paginator
+  const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
   const { addToCart } = useContext(CartContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     axios
-      .get('https://localhost:7219/api/Product/getProductCategory/2') 
+      .get('https://localhost:7219/api/Product/getProductCategory/3')
       .then((res) => {
         setProducts(res.data);
         setError(null);
@@ -85,7 +85,7 @@ function Cloth() {
     return null;
   };
 
-  // Pagination logic: slice products for current page
+  // Pagination slice
   const start = currentPage * rowsPerPage;
   const end = start + rowsPerPage;
   const currentProducts = products.slice(start, end);
@@ -94,7 +94,7 @@ function Cloth() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 via-blue-200 to-indigo-400 px-4">
       <div className="max-w-screen-xl mx-auto w-full">
         <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 text-center mt-6 mb-10">
-          Explore Our Cloth Products
+          Explore Our Home Appliance Products
         </h1>
 
         {error && <div className="text-red-500 text-center">{error}</div>}
@@ -173,4 +173,4 @@ function Cloth() {
   );
 }
 
-export default Cloth;
+export default HomeAppliance;

@@ -10,18 +10,29 @@ const ProductForm = ({ product, onClose, onRefresh }) => {
         category_id: '',
     });
 
+    const categories = [
+        { id: '1', name: 'Electronics' },
+        { id: '2', name: 'Fashion' },
+        { id: '3', name: 'Home Appliances' },
+        { id: '4', name: 'Books' },
+    ];
+
     useEffect(() => {
         if (product) {
+            const categoryMatch = categories.find(cat => cat.name === product.category_name);
+            const matchedCategoryId = categoryMatch ? categoryMatch.id : '';
+
             setFormData({
                 product_name: product.product_name,
                 product_description: product.product_description,
                 product_price: product.product_price,
                 product_image: product.product_image,
                 product_isActive: product.product_isActive,
-                category_id: product.category_id || '',
+                category_id: matchedCategoryId,
             });
         }
     }, [product]);
+
 
 
     const handleChange = (e) => {
@@ -51,11 +62,11 @@ const ProductForm = ({ product, onClose, onRefresh }) => {
         e.preventDefault();
 
         const form = new FormData();
-        const fileInput = document.getElementById("product_image"); 
+        const fileInput = document.getElementById("product_image");
 
         // Make sure fileInput is valid and has files
         if (fileInput && fileInput.files && fileInput.files.length > 0) {
-    form.append("product_image", fileInput.files[0]); 
+            form.append("product_image", fileInput.files[0]);
         }
 
         // Append other form data
@@ -101,25 +112,21 @@ const ProductForm = ({ product, onClose, onRefresh }) => {
 
                     <input name="product_price" id="product_price" type="number" placeholder="Price" className="w-full p-2 border" value={formData.product_price} onChange={handleChange} required />
 
-                    <input type='file' name="product_image" id='product_image' placeholder="Image URL" className="w-full p-2 border"  onChange={handleChange} />
+                    <input type='file' name="product_image" id='product_image' placeholder="Image URL" className="w-full p-2 border" onChange={handleChange} />
 
 
                     <select
                         name="category_id"
-                        className='w-full p-2 border'
-                        value={formData.category_id} // Bind value to formData.category_id
+                        className="w-full p-2 border"
+                        value={formData.category_id}
                         onChange={handleChange}
                     >
-                        <option value="default">Select Category</option>
-                        <option value="1">Electronics</option>
-                        <option value="2">Fashion</option>
-                        <option value="3">Home Appliances</option>
-                        <option value="4">Books</option>
-                        <option value="5">Groceries</option>
-                        
-                        {/* Add more categories here */}
+                        {categories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>
+                                {cat.name}
+                            </option>
+                        ))}
                     </select>
-
 
                     <div className="flex justify-end space-x-2">
                         <button type="submit" className="px-4 py-2 hover:bg-yellow-600 bg-blue-600 text-white rounded">Save</button>

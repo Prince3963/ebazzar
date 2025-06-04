@@ -115,14 +115,8 @@ const ProductDetails = () => {
             <h1 className="text-3xl font-bold text-gray-800 mb-4">{product.product_name}</h1>
             <p className="text-lg text-gray-600 mb-6">{product.product_description}</p>
             <p className="text-2xl text-green-600 font-semibold mb-6">₹{product.product_price}</p>
-            <p className="text-2xl text-green-600 font-semibold mb-6">{product.Category?.category_name}</p>
-            
-            Implement category<br></br>
-            Implement category<br></br>
-            Implement category<br></br>
-            Implement category<br></br>
-            Implement category<br></br>
-
+            <p className="text-2xl text-green-600 font-semibold mb-6">{product.category_name}</p>
+           
             <button
               onClick={handleAddToCart}
               className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-200"
