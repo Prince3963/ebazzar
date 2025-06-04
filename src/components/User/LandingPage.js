@@ -19,8 +19,8 @@ const LandingPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [postPerPage] = useState(8);
   const { addToCart } = useContext(CartContext);
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProductsAndMergeCart = async () => {
@@ -114,8 +114,8 @@ const LandingPage = () => {
           Explore Our Product Store
         </h1>
 
-        {loading && <div>Loading...</div>}  
-        {error && <div className="text-red-500">{error}</div>}  
+        {loading && <div>Loading...</div>}
+        {error && <div className="text-red-500">{error}</div>}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {currentPost.map((product) => (
@@ -148,6 +148,8 @@ const LandingPage = () => {
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-lg font-bold text-blue-700">
                       ₹{product.product_price}
+                      <div className="text-green-700">{product.category_name}</div> 
+
                     </span>
 
                     <button
@@ -156,6 +158,9 @@ const LandingPage = () => {
                     >
                       Add to Cart
                     </button>
+                  </div>
+
+                  <div className="text-green-700">
                   </div>
                 </div>
               </div>

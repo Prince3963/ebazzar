@@ -115,11 +115,13 @@ const ProductDetails = () => {
             <h1 className="text-3xl font-bold text-gray-800 mb-4">{product.product_name}</h1>
             <p className="text-lg text-gray-600 mb-6">{product.product_description}</p>
             <p className="text-2xl text-green-600 font-semibold mb-6">₹{product.product_price}</p>
-
-            <div className="flex gap-4 mb-6">
-              <p className="text-sm text-gray-500">Category: {product.Category?.category_name || "N/A"}</p>
-              {/* <p className="text-sm text-gray-500">Status: {product.product_isActive === "true" ? "In Stock" : "Out of Stock"}</p> */}
-            </div>
+            <p className="text-2xl text-green-600 font-semibold mb-6">{product.Category?.category_name}</p>
+            
+            Implement category<br></br>
+            Implement category<br></br>
+            Implement category<br></br>
+            Implement category<br></br>
+            Implement category<br></br>
 
             <button
               onClick={handleAddToCart}
@@ -127,12 +129,7 @@ const ProductDetails = () => {
             >
               Add to Cart
             </button>
-            <button
-              className="w-full py-3 mt-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-200"
-              onClick={() => navigate(-1)}
-            >
-              Back to Home
-            </button>
+            
 
           </div>
         </div>

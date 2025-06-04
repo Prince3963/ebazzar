@@ -144,6 +144,7 @@ const UserDashboard = () => {
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-lg font-bold text-blue-700">
                       ₹{product.product_price}
+                      <div className="text-green-700">{product.category_name}</div> 
                     </span>
 
                     <button
@@ -154,16 +155,7 @@ const UserDashboard = () => {
                     </button>
                   </div>
 
-                  {/* Product Availability */}
-                  {product.product_isActive?.toLowerCase() === "true" ? (
-                    <span className="inline-block text-green-700 bg-green-100 text-xs font-medium px-2 py-1 rounded-full">
-                      In Stock
-                    </span>
-                  ) : (
-                    <span className="inline-block text-red-700 bg-red-100 text-xs font-medium px-2 py-1 rounded-full">
-                      Not Available
-                    </span>
-                  )}
+                  
                 </div>
               </div>
             </div>

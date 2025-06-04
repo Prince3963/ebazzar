@@ -25,11 +25,11 @@ import AppDownload from './components/Footers/AppDownload';
 import Contact from './components/Footers/Contact';
 import Cart from './components/Headers/Cart.js';
 import { useEffect, useState } from 'react';
-
 //ReactPrime 
 import 'primereact/resources/themes/lara-light-indigo/theme.css';  // Theme
 import 'primereact/resources/primereact.min.css';                  // Core Styles
 import 'primeicons/primeicons.css';                                // Icons
+import Cloth from './components/User/Cloth.js';
 
 
 function App() {
@@ -88,6 +88,7 @@ function AppContent() {
         <Route path="/about" element={<About />}  />
         <Route path="/cart" element={<Cart/>} />
         <Route path="/electronic" element={<Electronic />} />
+        <Route path="/cloth" element={<Cloth />} />
 
         {/* Authentication */}
         <Route path="/login" element={<PublicRoute element={<Login />} />} />

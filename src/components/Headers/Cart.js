@@ -152,6 +152,7 @@ function Cart() {
         </ul>
       )}
 
+        {cartItems.length > 0 && (
       <div className="flex justify-end">
         <button
           onClick={checkOutHandler} // Handle checkout click
@@ -160,6 +161,7 @@ function Cart() {
           Check out
         </button>
       </div>
+      )}
       <ToastContainer/>
     </div>
   );
