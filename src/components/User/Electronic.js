@@ -18,8 +18,8 @@ const getCookie = (cookieName) => {
 
 function Electronic() {
   const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0); // zero-based for PrimeReact paginator
-  const [rowsPerPage, setRowsPerPage] = useState(8);
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(8);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { addToCart } = useContext(CartContext);
@@ -93,10 +93,16 @@ function Electronic() {
     navigate(`/product/${productId}`);
   };
 
+    const onPageChange = (event) => {
+      setFirst(event.first);
+      setRows(event.rows);
+  };
   // Pagination slicing
-  const start = currentPage * rowsPerPage;
-  const end = start + rowsPerPage;
-  const currentPost = products.slice(start, end);
+  // const start = currentPage * rowsPerPage;
+  // const end = start + rowsPerPage;
+  // const currentPost = products.slice(start, end);
+
+  const checkPaginator = products.slice(first, first + rows);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-200 via-white to-indigo-200 px-4 py-10">
@@ -109,7 +115,7 @@ function Electronic() {
         {error && <div className="text-red-600 text-center">{error}</div>}
 
         <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
-          {currentPost.map((product) => (
+          {checkPaginator.map((product) => (
             <div
               key={product.product_id}
               className="bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-[1.02] transition duration-300 ease-in-out border border-gray-200 flex flex-col"
@@ -155,22 +161,13 @@ function Electronic() {
         </div>
 
         <div className="flex justify-center mt-12">
-          <Paginator
-            first={currentPage * rowsPerPage}
-            rows={rowsPerPage}
-            totalRecords={products.length}
-            rowsPerPageOptions={[8, 12, 20]}
-            onPageChange={(e) => {
-              setCurrentPage(e.page);
-              setRowsPerPage(e.rows);
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
+          <Paginator first={first} rows={rows} totalRecords={16} rowsPerPageOptions={[8, 12, 20]} onPageChange={onPageChange}
             className="w-full gap-2 bg-white shadow-md rounded-lg p-3"
           />
         </div>
       </div>
 
-      <ToastContainer position="top-right" autoClose={2000} />
+      <ToastContainer position="top-right" autoClose={500} />
     </div>
   );
 }

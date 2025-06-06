@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import img from '../Image/TriBase.png';
 
 function UserProfile() {
   const [userData, setUserData] = useState(null);
@@ -98,92 +99,91 @@ function UserProfile() {
     return <div className="text-center text-red-500 font-medium">{error}</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-8 px-4">
-      <div className="w-full max-w-lg bg-white shadow-xl rounded-lg p-6">
-        <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">
-          User Profile
-        </h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center py-10 px-4">
+      <div className="w-full max-w-2xl bg-white shadow-lg rounded-xl p-8 space-y-8">
+        {/* Static Profile Image */}
+        <div className="flex flex-col items-center border-indigo-800 space-y-3">
+          <img
+            src={img} // You can use your own image URL or a local asset
+            alt="User"
+            className="w-24 h-24 rounded-full shadow-md object-cover border-2 border-blue-500"
+          />
+          <h2 className="text-2xl font-bold text-gray-800">User Profile</h2>
+        </div>
 
-        <div className="space-y-6">
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Username</label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <label className="text-sm text-gray-500 font-medium">Username</label>
             <input
               type="text"
-              name="username"
               disabled
               value={userData?.username || ""}
-              className="border border-gray-300 rounded-lg p-3 text-gray-700"
+              className="mt-1 w-full bg-gray-100 border border-gray-300 rounded-md p-3 text-gray-700"
             />
           </div>
-
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Email</label>
+          <div>
+            <label className="text-sm text-gray-500 font-medium">Email</label>
             <input
               type="text"
-              name="email"
               disabled
               value={userData?.email || ""}
-              className="border border-gray-300 rounded-lg p-3 text-gray-700"
+              className="mt-1 w-full bg-gray-100 border border-gray-300 rounded-md p-3 text-gray-700"
             />
           </div>
-
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Mobile</label>
+          <div>
+            <label className="text-sm text-gray-500 font-medium">Mobile</label>
             <input
               type="text"
-              name="mobile"
               disabled
               value={userData?.mobile || ""}
-              className="border border-gray-300 rounded-lg p-3 text-gray-700"
+              className="mt-1 w-full bg-gray-100 border border-gray-300 rounded-md p-3 text-gray-700"
             />
           </div>
-
-          <div className="text-right">
-            <button
-              onClick={() => setShowPasswordField(!showPasswordField)}
-              className="text-sm text-blue-600 hover:underline"
-            >
-              {showPasswordField
-                ? "Cancel Password Change"
-                : "Change Password"}
-            </button>
-          </div>
-
-          {showPasswordField && (
-            <div className="flex flex-col relative">
-              <label className="text-gray-700 font-medium">New Password</label>
+          <div>{showPasswordField && (
+            <div className="space-y-4 animate-fade-in">
               <div className="relative">
+                <label className="text-sm text-gray-500 font-medium">New Password</label>
                 <input
                   type={passwordVisible ? "text" : "password"}
-                  name="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 pr-10"
+                  className="mt-1 w-full border border-gray-300 rounded-md p-3 pr-12 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <span
+                <div
                   onClick={togglePasswordVisibility}
-                  className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+                  className="absolute top-14 right-4 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700"
                 >
-                  {passwordVisible ? <FaEye /> : <FaEyeSlash />}
-                </span>
+                  {passwordVisible ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                </div>
               </div>
             </div>
-          )}
 
-          {showPasswordField && (
-            <div className="flex justify-center">
-              <button
-                onClick={handleUpdatePassword}
-                className="w-full sm:w-auto bg-blue-600 text-white font-semibold rounded-lg px-6 py-3 shadow-md hover:bg-blue-700"
-              >
-                Update Password
-              </button>
-            </div>
-          )}
+          )} </div>
+        </div>
+
+        {/* Change Password Toggle */}
+        <div className="flex justify-end">
+          <button
+            onClick={() => setShowPasswordField(!showPasswordField)}
+            className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
+          >
+            {showPasswordField ? "Cancel Password Change" : "Change Password"}
+          </button>
+        </div>
+
+        {/* Password Field Below Mobile */}
+        <div className="flex justify-center">
+          <button
+            onClick={handleUpdatePassword}
+            className="bg-blue-600 text-white font-semibold rounded-lg px-6 py-3 shadow hover:bg-blue-700 transition duration-200"
+          >
+            Update Password
+          </button>
         </div>
       </div>
     </div>
   );
+
 }
 
 export default UserProfile;

@@ -65,8 +65,8 @@ const ProductTable = ({ products, onEdit, onDelete, fetchProductsForUser }) => {
 );
 
   return (
-    <div>
-      <h2 className="text-lg font-semibold mb-4 text-gray-800">Product List</h2>
+    <div className='bg-slate-200 rounded-lg p-2'>
+      <h2 className="text-lg font-semibold mb-4  text-gray-800">Product List</h2>
 
       <DataTable
         value={products}

@@ -1,14 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "./CartContext";
 import { ToastContainer, toast } from "react-toastify";
-import { Paginator } from "primereact/paginator";
-import "primereact/resources/themes/lara-light-blue/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
 import "react-toastify/dist/ReactToastify.css";
+import { Paginator } from "primereact/paginator";
 
 const getCookie = (cookieName) => {
   const value = `; ${document.cookie}`;
@@ -19,21 +15,19 @@ const getCookie = (cookieName) => {
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
-  const [postPerPage] = useState(8);
   const { addToCart } = useContext(CartContext);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(8);
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(8); // items per page
 
   useEffect(() => {
     const fetchProductsAndMergeCart = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(
-          "https://localhost:7219/api/Product/viewProduct"
-        );
+        const res = await axios.get("https://localhost:7219/api/Product/viewProduct");
+
         const activeProducts = res.data.filter(
           (product) => product.product_isActive === "true"
         );
@@ -58,8 +52,7 @@ const LandingPage = () => {
           localStorage.removeItem("guest_cart");
         }
       } catch (err) {
-        // console.error("Error fetching products or merging cart:", err);
-        // setError("Failed to load products or merge cart.");
+        setError("Failed to load products or merge cart.");
       } finally {
         setLoading(false);
       }
@@ -83,9 +76,8 @@ const LandingPage = () => {
           }
         );
         toast.success("Product added to cart!");
-      } catch (error) {
-        // console.error("Error adding to cart:", error);
-        // toast.error("Failed to add product to cart.");
+      } catch {
+        toast.error("Failed to add product to cart.");
       }
     } else {
       const guestCartRaw = localStorage.getItem("guest_cart");
@@ -112,9 +104,12 @@ const LandingPage = () => {
     }
   };
 
-  const start = currentPage * rowsPerPage;
-  const end = start + rowsPerPage;
-  const currentPost = products.slice(start, end);
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+  };
+
+  const paginatedProducts = products.slice(first, first + rows);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-200 via-white to-indigo-200 px-4 py-10">
@@ -124,10 +119,10 @@ const LandingPage = () => {
         </h1>
 
         {loading && <div className="text-center text-lg">Loading...</div>}
-        {/* {error && <div className="text-red-500 text-center">{error}</div>} */}
+        {error && <div className="text-red-500 text-center">{error}</div>}
 
         <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
-          {currentPost.map((product) => (
+          {paginatedProducts.map((product) => (
             <div
               key={product.product_id}
               className="bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-[1.02] transition duration-300 ease-in-out border border-gray-200 flex flex-col"
@@ -172,23 +167,15 @@ const LandingPage = () => {
           ))}
         </div>
 
-        <div className="flex justify-center mt-12">
-          <Paginator
-            first={currentPage * rowsPerPage}
-            rows={rowsPerPage}
-            totalRecords={products.length}
-            rowsPerPageOptions={[8, 12, 16]}
-            onPageChange={(e) => {
-              setCurrentPage(e.page);
-              setRowsPerPage(e.rows);
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            className="w-full gap-2 bg-white shadow-md rounded-lg p-3"
+        {/* Paginator */}
+        {products.length > 0 && (
+          <Paginator first={first} rows={rows} totalRecords={20} rowsPerPageOptions={[8, 12, 20]} onPageChange={onPageChange}
+          className="mt-8 flex justify-center"
           />
-        </div>
+        )}
       </div>
 
-      <ToastContainer position="top-right" autoClose={2000} />
+      <ToastContainer position="top-right" autoClose={500} />
     </div>
   );
 };

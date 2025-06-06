@@ -2,16 +2,16 @@ import { createContext, useState, useEffect } from "react";
 
 export const CartContext = createContext();
 
-export const CartProvider = ({ children, value }) => {
+export const CartProvider = ({ children }) => {
   const [internalCartItems, internalSetCartItems] = useState(() => {
     const stored = localStorage.getItem("guest_cart");
     return stored ? JSON.parse(stored) : [];
   });
 
-  // If external value is passed, use it; otherwise use internal state
-  const cartItems = value?.cartItems ?? internalCartItems;
-  const setCartItems = value?.setCartItems ?? internalSetCartItems;
+  const cartItems = internalCartItems;
+  const setCartItems = internalSetCartItems;
 
+  // Sync cartItems with localStorage
   useEffect(() => {
     if (cartItems.length === 0) {
       localStorage.removeItem("guest_cart");

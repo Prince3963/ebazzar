@@ -65,36 +65,13 @@ const UserDashboard = () => {
     fetchProductsAndMergeCart();
   }, [setCartItems]);
 
-  const handleAddToCart = (product) => {
-    const token = getCookie("token");
+  // 👇 Replace entire handleAddToCart with this:
+const handleAddToCart = (product) => {
+  addToCart(product); // 🟢 Context ke method se localStorage bhi update hoga, badge bhi
+  toast.success("Product added to cart!");
+};
 
-    if (token) {
-      // User logged in, ideally call addToCart from context or api
-      addToCart(product.product_id, 1);
-      toast.success("Product added to cart!");
-    } else {
-      // Guest cart logic
-      const guestCartRaw = localStorage.getItem("guest_cart");
-      const guestCart = guestCartRaw ? JSON.parse(guestCartRaw) : [];
 
-      const existingIndex = guestCart.findIndex(item => item.productId === product.product_id);
-
-      if (existingIndex >= 0) {
-        guestCart[existingIndex].quantity += 1;
-      } else {
-        guestCart.push({
-          productId: product.product_id,
-          quantity: 1,
-          product_name: product.product_name,
-          product_price: product.product_price,
-          product_imageURL: product.product_imageURL,
-        });
-      }
-
-      localStorage.setItem("guest_cart", JSON.stringify(guestCart));
-      toast.success("Product added to cart!");
-    }
-  };
 
   // Pagination slice
   const start = currentPage * rowsPerPage;
@@ -173,7 +150,7 @@ const UserDashboard = () => {
         </div>
       </div>
 
-      <ToastContainer position="top-right" autoClose={2000} />
+      <ToastContainer position="top-right" autoClose={500} />
     </div>
   );
 };

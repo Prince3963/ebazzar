@@ -25,13 +25,13 @@ import AppDownload from './components/Footers/AppDownload';
 import Contact from './components/Footers/Contact';
 import Cart from './components/Headers/Cart.js';
 import { useEffect, useState } from 'react';
+import Cloth from './components/User/Cloth.js';
+import HomeAppliance from './components/User/HomeAppliances.js';
+import Books from './components/User/Books.js';
 //ReactPrime 
 import 'primereact/resources/themes/lara-light-indigo/theme.css';  // Theme
 import 'primereact/resources/primereact.min.css';                  // Core Styles
 import 'primeicons/primeicons.css';                                // Icons
-import Cloth from './components/User/Cloth.js';
-import HomeAppliance from './components/User/HomeAppliances.js';
-import Books from './components/User/Books.js';
 
 
 function App() {
@@ -76,19 +76,31 @@ function AppContent() {
 
   return (
     <>
-      <Navbar />
+
+      <Routes>
+        {/* Admin Pages */}
+        <Route path="/admin/sidebar" element={<PublicRoute element={<Sidebar />} />} />
+        <Route path="/admin" element={<PublicRoute element={<Dashboard />} />} />
+        <Route path="/admin/product" element={<PublicRoute element={<Product />} />} />
+        <Route path="/admin/order" element={<PublicRoute element={<Order />} />} />
+        <Route path="/admin/customer" element={<PublicRoute element={<Customer />} />} />
+      </Routes>
+      {/* <Navbar /> */}
+      {!locationPath.pathname.startsWith('/admin') && <Navbar />}
+
+      
       <Routes key={locationPath.pathname}>
         {/* Public Pages */}
         <Route path="/" element={<PublicRoute element={<LandingPage />} />} />
         <Route path="/home" element={<PublicRoute element={<Home />} />} />
         <Route path="/order" element={<PublicRoute element={<Order />} />} />
-        <Route path="/terms" element={<TermsOfService />}  />
-        <Route path="/privacy" element={<PrivacyPolicy />}  />
-        <Route path="/disclaimer" element={<Disclaimer />}  />
-        <Route path="/app" element={<AppDownload />}  />
-        <Route path="/contact" element={<Contact />}  />
-        <Route path="/about" element={<About />}  />
-        <Route path="/cart" element={<Cart/>} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/disclaimer" element={<Disclaimer />} />
+        <Route path="/app" element={<AppDownload />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/cart" element={<Cart />} />
         <Route path="/electronic" element={<Electronic />} />
         <Route path="/cloth" element={<Cloth />} />
         <Route path="/homeAppliance" element={<HomeAppliance />} />
@@ -105,14 +117,14 @@ function AppContent() {
         <Route path="/profile" element={<PrivateRoute element={<UserProfile />} />} />
         <Route path="/product/:id" element={<ProductDetails />} />
 
-        {/* Admin Pages */}
-        <Route path="/admin/sidebar" element={<PublicRoute element={<Sidebar />} />} />
-        <Route path="/admin" element={<PublicRoute element={<Dashboard />} />} />
-        <Route path="/admin/product" element={<PublicRoute element={<Product />} />} />
-        <Route path="/admin/order" element={<PublicRoute element={<Order />} />} />
-        <Route path="/admin/customer" element={<PublicRoute element={<Customer />} />} />
+
       </Routes>
-      <Footer />
+      {/* <Footer /> */}
+
+      {!locationPath.pathname.startsWith('/admin') && <Footer />}
+
+
+
     </>
   );
 }

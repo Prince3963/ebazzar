@@ -38,7 +38,6 @@ const ProductDetails = () => {
   const handleAddToCart = async () => {
     const token = getCookie("token");
 
-    // Toast before performing cart update logic
     toast.success("Product added to cart!");  // Show success toast first
 
     if (token) {
@@ -115,15 +114,18 @@ const ProductDetails = () => {
             <h1 className="text-3xl font-bold text-gray-800 mb-4">{product.product_name}</h1>
             <p className="text-lg text-gray-600 mb-6">{product.product_description}</p>
             <p className="text-2xl text-green-600 font-semibold mb-6">₹{product.product_price}</p>
-            <p className="text-2xl text-green-600 font-semibold mb-6">{product.category_name}</p>
-           
+            {/* <p className="text-2xl text-green-600 font-semibold mb-6">{product.category_name}</p> */}
+            <div className="text-xs flex justify-center mb-4 bg-blue-100 text-blue-800 font-medium px-3 py-1 rounded-full shadow-sm border border-blue-300 mt-1">
+              {product.category_name}
+            </div>
+
             <button
               onClick={handleAddToCart}
               className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-200"
             >
               Add to Cart
             </button>
-            
+
 
           </div>
         </div>
