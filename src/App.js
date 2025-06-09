@@ -116,7 +116,7 @@ function AppContent() {
         {/* User Pages */}
         <Route path="/user/userDashboard" element={<PrivateRoute element={<UserDashboard />} />} />
         <Route path="/profile" element={<PrivateRoute element={<UserProfile />} />} />
-        <Route path="/address"  element={<AddressPage />} />
+        <Route path="/address" element={<PrivateRoute element={<AddressPage />}/>} />
         <Route path="/product/:id" element={<ProductDetails />} />
 
 

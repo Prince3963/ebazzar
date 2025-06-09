@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function AddressPage() {
+    const [isVisible, setIsVisible] = useState(true);
+    const navigate = useNavigate();
+
+    const toggleVisible = () => {
+        setIsVisible(!isVisible);
+    };
+
     const [form, setForm] = useState({
         number: "",
         street: "",
@@ -16,7 +25,7 @@ function AddressPage() {
     });
 
     const [addresses, setAddresses] = useState([]);
-    // const user_id = localStorage.getItem("user_id");
+    const [selectedAddressId, setSelectedAddressId] = useState(null);
 
     const getCookie = (name) => {
         const value = `; ${document.cookie}`;
@@ -33,12 +42,10 @@ function AddressPage() {
         e.preventDefault();
         try {
             const token = getCookie("token");
-            // const user_id = localStorage.getItem("user_id"); // ✅ Get user_id here
-
-            const payload = { ...form }; // ✅ Include it in payload
+            const payload = { ...form }; // Include it in payload
 
             const res = await axios.post(
-                "https://localhost:7219/api/Address",
+                "https://localhost:7219/api/Address/user_id",
                 payload,
                 {
                     headers: {
@@ -49,7 +56,7 @@ function AddressPage() {
             );
 
             if (res.data.status) {
-                alert("Address Saved!");
+                // alert("Address Saved!");
                 fetchAddresses();
                 setForm({
                     number: "",
@@ -69,29 +76,47 @@ function AddressPage() {
         }
     };
 
-
-
     const fetchAddresses = async () => {
         try {
-            const token = localStorage.getItem("token");
-            const user_id = localStorage.getItem("user_id");
-
-            if (!user_id) {
-                console.error("User ID not found!");
-                return;
-            }
-
-            const res = await axios.get(`https://localhost:7219/api/Address/${user_id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const token = getCookie("token");
+            const res = await axios.get(
+                "https://localhost:7219/api/Address/",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
 
             if (res.data.status) {
                 setAddresses(res.data.data);
             }
         } catch (err) {
             console.error("Error fetching addresses:", err);
+        }
+    };
+
+    const checkOutHandler = () => {
+        const token = getCookie("token");
+
+        // ❗ Check if user has selected any address
+        if (!selectedAddressId) {
+            toast.error("❗ Please select an address before proceeding.");
+            return;
+        }
+
+        const selectedAddress = addresses.find(addr => addr.address_id === selectedAddressId);
+
+        if (selectedAddress) {
+            localStorage.setItem("selectedAddress", JSON.stringify(selectedAddress));
+            console.log("Address saved to localStorage:", selectedAddress);
+        }
+
+        if (token) {
+            navigate('/address');
+        } else {
+            toast("Please login and access it");
+            navigate('/login');
         }
     };
 
@@ -102,8 +127,16 @@ function AddressPage() {
     }, []);
 
     return (
-        <div className="p-6 max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Add Address</h2>
+        <div className="p-8 bg-gray-50 min-h-screen relative">
+            <button
+                onClick={() => navigate(-1)}
+                className="absolute top-4 left-4 py-2 px-4 bg-indigo-500 text-white rounded-lg hover:bg-gray-600 transition duration-200"
+            >
+                &larr;
+            </button>
+
+            <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Select Address</h2>
+
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* <input type="text" name="username" value={form.username} onChange={handleChange} placeholder="Full Name" required className="p-2 border rounded" />
                 <input type="text" name="mobile" value={form.mobile} onChange={handleChange} placeholder="Mobile Number" required className="p-2 border rounded" /> */}
@@ -123,16 +156,41 @@ function AddressPage() {
             <hr className="my-6" />
 
             <h3 className="text-xl font-semibold mb-3">Your Saved Addresses</h3>
+
+            {/* <button onClick={toggleVisible} className="mb-2 bg-blue-500 text-white px-4 py-1 rounded">
+                {isVisible ? 'Hide Address' : 'Show Address'}
+            </button> */}
+
             <ul className="space-y-4">
-                {addresses.map(addr => (
-                    <li key={addr.address_id} className="bg-white p-4 shadow rounded">
-                        <div><strong>{addr.username}</strong> ({addr.mobile})</div>
-                        <div>{addr.number}, {addr.street}, {addr.city}, {addr.state}, {addr.zipCode}, {addr.country}</div>
-                        <div>{addr.landmark}</div>
-                        <div className="text-sm text-gray-500">Default: {addr.isDefault}</div>
+                {addresses.map((addr) => (
+                    <li key={addr.address_id} className="bg-white p-4 shadow rounded flex items-start gap-4">
+                        <input
+                            type="radio"
+                            name="selectedAddress"
+                            checked={selectedAddressId === addr.address_id}
+                            onChange={() => setSelectedAddressId(addr.address_id)}
+                            className="mt-1"
+                        />
+
+                        <div>
+                            <div>{addr.number}, {addr.street}, {addr.city}, {addr.state}, {addr.zipCode}, {addr.country}</div>
+                            <div>{addr.landmark}</div>
+                            {/* <div className="text-sm text-gray-500">Default: {addr.isDefault ? 'Yes' : 'No'}</div> */}
+                        </div>
                     </li>
                 ))}
             </ul>
+
+            <div className="flex justify-end mt-6">
+                <button
+                    onClick={checkOutHandler}
+                    className="p-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-200"
+                >
+                    Process to pay
+                </button>
+            </div>
+            <ToastContainer position="top-center" autoClose={1500} />
+
         </div>
     );
 }
