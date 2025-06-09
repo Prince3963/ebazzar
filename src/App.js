@@ -32,6 +32,7 @@ import Books from './components/User/Books.js';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';  // Theme
 import 'primereact/resources/primereact.min.css';                  // Core Styles
 import 'primeicons/primeicons.css';                                // Icons
+import AddressPage from './components/Headers/AddressPage.js';
 
 
 function App() {
@@ -115,6 +116,7 @@ function AppContent() {
         {/* User Pages */}
         <Route path="/user/userDashboard" element={<PrivateRoute element={<UserDashboard />} />} />
         <Route path="/profile" element={<PrivateRoute element={<UserProfile />} />} />
+        <Route path="/address"  element={<AddressPage />} />
         <Route path="/product/:id" element={<ProductDetails />} />
 
 

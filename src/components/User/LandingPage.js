@@ -43,11 +43,11 @@ const LandingPage = () => {
             quantity: item.quantity,
           }));
 
-          await axios.post("https://localhost:7219/api/Cart/merge", payload, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          // await axios.post("https://localhost:7219/api/Cart/merge", payload, {
+          //   headers: {
+          //     Authorization: `Bearer ${token}`,
+          //   },
+          // });
 
           localStorage.removeItem("guest_cart");
         }

@@ -61,7 +61,6 @@ function UserProfile() {
     setPasswordVisible(!passwordVisible);
   };
 
-  // ✅ Password update function updated for new backend API
   const handleUpdatePassword = async () => {
     const token = getCookie("token");
 
@@ -101,10 +100,11 @@ function UserProfile() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center py-10 px-4">
       <div className="w-full max-w-2xl bg-white shadow-lg rounded-xl p-8 space-y-8">
+      
         {/* Static Profile Image */}
         <div className="flex flex-col items-center border-indigo-800 space-y-3">
           <img
-            src={img} // You can use your own image URL or a local asset
+            src={img} 
             alt="User"
             className="w-24 h-24 rounded-full shadow-md object-cover border-2 border-blue-500"
           />

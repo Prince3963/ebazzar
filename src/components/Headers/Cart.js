@@ -2,17 +2,22 @@ import React, { useContext } from 'react';
 import { CartContext } from '../User/CartContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom'; 
-import { ToastContainer, toast } from "react-toastify"; // Import toast
-import "react-toastify/dist/ReactToastify.css"; // Import the styles
+import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useState, useEffect } from "react";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+
 
 function Cart() {
-  const { cartItems, setCartItems } = useContext(CartContext); // Cart context to update state
-  const navigate = useNavigate(); // Initialize navigate for routing
+  const { cartItems, setCartItems } = useContext(CartContext);
+  const navigate = useNavigate();
+  const [customers, setCustomers] = useState([]);
 
   // Get cart data from localStorage (adi)
   const adi = JSON.parse(localStorage.getItem("guest_cart") || "[]");
-  
+
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -21,13 +26,13 @@ function Cart() {
   };
 
   const checkOutHandler = () => {
-    const token = getCookie("token"); 
+    const token = getCookie("token");
     if (token) {
-      alert('Success! You are ready to checkout!');
+      navigate('/address');
       console.log("Ho gaya  ");
     } else {
       toast("Please login and access it ");
-      navigate('/login'); 
+      navigate('/login');
     }
   };
 
@@ -56,24 +61,29 @@ function Cart() {
     localStorage.setItem('guest_cart', JSON.stringify(updatedItems)); // Sync localStorage with updated data
   };
 
-  const calculateItemTotal = (price, quantity) => price * quantity;
-
   const calculateCartTotal = () =>
     adi.reduce((total, item) => total + calculateItemTotal(item.product_price, item.quantity), 0);
+
+
+  const calculateItemTotal = (price, quantity) => price * quantity;
+  const subTotal = calculateCartTotal();
+  const deliveryFees = 100;
+  const discount = 0;
+  const totalAmount = subTotal + deliveryFees - discount / 100;
+
 
   // Remove item logic
   const removeItem = (productId) => {
     const updatedItems = adi.filter(item => item.productId !== productId);
 
-    setCartItems(updatedItems); // Update the context with removed item
-    localStorage.setItem('guest_cart', JSON.stringify(updatedItems)); // Sync with localStorage
+    setCartItems(updatedItems);
+    localStorage.setItem('guest_cart', JSON.stringify(updatedItems));
   };
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen relative">
-      
       <button
-        onClick={() => navigate(-1)} 
+        onClick={() => navigate(-1)}
         className="absolute top-4 left-4 py-2 px-4 bg-indigo-500 text-white rounded-lg hover:bg-gray-600 transition duration-200"
       >
         &larr;
@@ -84,82 +94,103 @@ function Cart() {
       {adi.length === 0 ? (
         <p className="text-center text-blue-950 text-xl">Your cart is empty.</p>
       ) : (
-        <ul className="space-y-6">
-          {adi.map((item) => (
-            <li
-              key={item.productId}
-              className="bg-white rounded-lg shadow p-4 flex items-center gap-4"
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white table-fixed shadow-md rounded-lg">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="py-3 px-4 text-left">Image</th>
+                <th className="py-3 px-4 text-left">Product</th>
+                <th className="py-3 px-4 text-left">Price</th>
+                <th className="py-3 px-4 text-left">Quantity</th>
+                <th className="py-3 px-4 text-left">Total</th>
+                <th className="py-3 px-4 text-left">Remove</th>
+              </tr>
+            </thead>
+            <tbody>
+              {adi.map((item) => (
+                <tr key={item.productId} className="border-b">
+                  <td className="py-3 px-4">
+                    <img
+                      src={item.product_imageURL}
+                      alt={item.product_name}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                  </td>
+                  <td className="py-3 px-4">{item.product_name}</td>
+                  <td className="py-3 px-4">₹{item.product_price.toFixed(2)}</td>
+                  <td className="py-3 px-4">
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => updateQuantity(item.productId, 'decrement')}
+                        className="w-8 h-8 bg-blue-500 text-white rounded-s hover:bg-blue-600"
+                      >
+                        -
+                      </button>
+                      <span className="w-6 text-center">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.productId, 'increment')}
+                        className="w-8 h-8 bg-blue-500 text-white rounded-e hover:bg-blue-600"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </td>
+                  <td className="py-3 px-4">
+                    ₹{calculateItemTotal(item.product_price, item.quantity).toFixed(2)}
+                  </td>
+                  <td className="py-3 px-4">
+                    <button
+                      onClick={() => removeItem(item.productId)}
+                      className="w-8 h-8 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center"
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+
+          </table>
+
+          <div className="rounded-lg shadow-lg overflow-hidden space-x-6 mt-6">
+            <ul>
+              <li className="bg-white p-6 flex items-center justify-between border-b">
+                <div className="text-xl font-semibold text-gray-900">Sub Total</div>
+                <div className="text-xl font-semibold text-gray-900">
+                  ₹{calculateCartTotal().toFixed(2)}
+                </div>
+              </li>
+              <li className="bg-white p-6 flex items-center justify-between border-b">
+                <div className="text-xl font-semibold text-gray-900">Delivery fees</div>
+                <div className="text-xl font-semibold text-gray-900">₹100</div>
+              </li>
+              <li className="bg-white p-6 flex items-center justify-between border-b">
+                <div className="text-xl font-semibold text-gray-900">Discount</div>
+                <div className="text-xl font-semibold text-gray-900">{discount}%</div>
+              </li>
+              <li className="bg-white p-6 flex items-center justify-between">
+                <div className="text-xl font-semibold text-gray-900">Total amount</div>
+                <div className="text-xl font-semibold text-gray-900">₹{totalAmount.toFixed(2)}</div>
+              </li>
+            </ul>
+          </div>
+
+
+          <div className="flex justify-end mt-6">
+            <button
+              onClick={checkOutHandler}
+              className="p-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-200"
             >
-              {/* Image */}
-              <img
-                src={item.product_imageURL}
-                alt={item.product_name}
-                className="w-20 h-20 object-cover rounded"
-              />
-
-              {/* Product name and price */}
-              <div className="flex flex-col flex-1 justify-center">
-                <h3 className="text-lg font-semibold text-gray-900">{item.product_name}</h3>
-                <p className="text-sm text-gray-600 mt-1">₹{item.product_price.toFixed(2)}</p>
-              </div>
-
-              {/* Quantity controls */}
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => updateQuantity(item.productId, 'decrement')}
-                  className="w-8 h-8 bg-blue-500 text-white rounded-s-lg hover:bg-blue-600 flex justify-center items-center"
-                >
-                  -
-                </button>
-                <span className="w-6 text-center font-semibold">{item.quantity}</span>
-                <button
-                  onClick={() => updateQuantity(item.productId, 'increment')}
-                  className="w-8 h-8 bg-blue-500 text-white rounded-e-lg hover:bg-blue-600 flex justify-center items-center"
-                >
-                  +
-                </button>
-              </div>
-
-              {/* Item total price */}
-              <div className="w-24 text-right font-semibold text-gray-900">
-                ₹{calculateItemTotal(item.product_price, item.quantity).toFixed(2)}
-              </div>
-
-              {/* Remove button with icon */}
-              <button
-                onClick={() => removeItem(item.productId)}
-                className="w-8 h-8 flex justify-center items-center text-white bg-red-500 rounded hover:bg-red-600"
-              >
-                <FontAwesomeIcon icon={faTrash} size="sm" />
-              </button>
-            </li>
-          ))}
-
-          <li className="bg-white rounded-lg shadow-lg p-6 flex items-center justify-between space-x-6 mt-6">
-            <div className="flex items-center space-x-6 flex-1">
-              <h3 className="text-xl font-semibold text-gray-900">Total Amount</h3>
-            </div>
-            <div className="text-xl font-semibold text-gray-900">
-              ₹{calculateCartTotal().toFixed(2)}
-            </div>
-          </li>
-        </ul>
-      )}
-
-      {adi.length > 0 && (
-        <div className="flex justify-end">
-          <button
-            onClick={checkOutHandler} // Handle checkout click
-            className="p-4 mt-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-200"
-          >
-            Check out
-          </button>
+              Check out
+            </button>
+          </div>
         </div>
       )}
 
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
+
 }
 
 export default Cart;

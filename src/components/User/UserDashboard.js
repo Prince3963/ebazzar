@@ -43,10 +43,6 @@ const UserDashboard = () => {
             quantity: item.quantity,
           }));
 
-          await axios.post("https://localhost:7219/api/Cart/merge", payload, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
           const updatedCartRes = await axios.get("https://localhost:7219/api/Cart/view", {
             headers: { Authorization: `Bearer ${token}` },
           });
