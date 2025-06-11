@@ -20,8 +20,8 @@ function AddressPage() {
         landmark: "",
         country: "",
         isDefault: "True",
-        // username: "",
-        // mobile: "",
+        username: "",
+        mobile: "",
     });
 
     const [addresses, setAddresses] = useState([]);
@@ -57,7 +57,6 @@ function AddressPage() {
 
             if (res.data.status) {
                 // alert("Address Saved!");
-                fetchAddresses();
                 setForm({
                     number: "",
                     street: "",
@@ -67,10 +66,11 @@ function AddressPage() {
                     landmark: "",
                     country: "",
                     isDefault: "false",
-                    // username: "",
-                    // mobile: "",
+                    username: "",
+                    mobile: "",
                 });
             }
+            await fetchAddresses();
         } catch (err) {
             console.error("Error saving address:", err);
         }
@@ -113,14 +113,12 @@ function AddressPage() {
         }
 
         if (token) {
-            navigate('/address');
+            navigate('/payment');
         } else {
             toast("Please login and access it");
             navigate('/login');
         }
     };
-
-
 
     useEffect(() => {
         fetchAddresses();
@@ -128,6 +126,7 @@ function AddressPage() {
 
     return (
         <div className="p-8 bg-gray-50 min-h-screen relative">
+            {/* Back Button */}
             <button
                 onClick={() => navigate(-1)}
                 className="absolute top-4 left-4 py-2 px-4 bg-indigo-500 text-white rounded-lg hover:bg-gray-600 transition duration-200"
@@ -135,63 +134,67 @@ function AddressPage() {
                 &larr;
             </button>
 
-            <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Select Address</h2>
+            <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Select or Add Address</h2>
 
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* <input type="text" name="username" value={form.username} onChange={handleChange} placeholder="Full Name" required className="p-2 border rounded" />
-                <input type="text" name="mobile" value={form.mobile} onChange={handleChange} placeholder="Mobile Number" required className="p-2 border rounded" /> */}
-                <input type="text" name="number" value={form.number} onChange={handleChange} placeholder="House/Flat No." required className="p-2 border rounded" />
-                <input type="text" name="street" value={form.street} onChange={handleChange} placeholder="Street" className="p-2 border rounded" />
-                <input type="text" name="landmark" value={form.landmark} onChange={handleChange} placeholder="Landmark" className="p-2 border rounded" />
-                <input type="text" name="city" value={form.city} onChange={handleChange} placeholder="City" required className="p-2 border rounded" />
-                <input type="text" name="state" value={form.state} onChange={handleChange} placeholder="State" required className="p-2 border rounded" />
-                <input type="text" name="zipCode" value={form.zipCode} onChange={handleChange} placeholder="Zipcode" required className="p-2 border rounded" />
-                <input type="text" name="country" value={form.country} onChange={handleChange} placeholder="Country" className="p-2 border rounded" />
+            {/* Flex container to hold Select and Add sections side by side */}
+            <div className="flex flex-col md:flex-row gap-8">
+                {/* Select Address (Left Side) */}
+                <div className="md:w-1/2 ">
+                    <h3 className="text-xl font-semibold mb-4">Add New Address</h3>
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
+                        {/* <input type="text" name="username" value={form.username} onChange={handleChange} placeholder="Receiver Full Name" required className="p-2 border rounded" />
+                        <input type="text" name="mobile" value={form.mobile} onChange={handleChange} placeholder="Receiver Mobile Number" required className="p-2 border rounded" /> */}
+                        <input type="text" name="number" value={form.number} onChange={handleChange} placeholder="House/Flat No." required className="p-2 border rounded" />
+                        <input type="text" name="street" value={form.street} onChange={handleChange} placeholder="Street" className="p-2 border rounded" />
+                        <input type="text" name="landmark" value={form.landmark} onChange={handleChange} placeholder="Landmark" className="p-2 border rounded" />
+                        <input type="text" name="city" value={form.city} onChange={handleChange} placeholder="City" required className="p-2 border rounded" />
+                        <input type="text" name="state" value={form.state} onChange={handleChange} placeholder="State" required className="p-2 border rounded" />
+                        <input type="text" name="zipCode" value={form.zipCode} onChange={handleChange} placeholder="Zipcode" required className="p-2 border rounded" />
+                        <input type="text" name="country" value={form.country} onChange={handleChange} placeholder="Country" className="p-2 border rounded" />
 
-                <button type="submit" className="col-span-2 bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700">
-                    Save Address
-                </button>
-            </form>
+                        <button type="submit" className="bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700">
+                            Save Address
+                        </button>
+                    </form>
+                </div>
+                {/* Add Address (Right Si
+                de) */}
+                <div className="md:w-1/2">
+                    <h3 className="text-xl font-semibold mb-3">Your Saved Addresses</h3>
+                    <ul className="space-y-4">
+                        {[...addresses].reverse().map((addr) => (
+                            <li key={addr.address_id} className="bg-white p-4 shadow rounded flex gap-4">
+                                <input
+                                    type="radio"
+                                    name="selectedAddress"
+                                    checked={selectedAddressId === addr.address_id}
+                                    onChange={() => setSelectedAddressId(addr.address_id)}
+                                    
+                                />
+                                <div>
+                                    <div>{addr.number}, {addr.street}, {addr.city}, {addr.state}, {addr.zipCode}, {addr.country}</div>
+                                    <div>{addr.landmark}, {addr.username}, {addr.mobile}</div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
 
-            <hr className="my-6" />
+            </div>
 
-            <h3 className="text-xl font-semibold mb-3">Your Saved Addresses</h3>
-
-            {/* <button onClick={toggleVisible} className="mb-2 bg-blue-500 text-white px-4 py-1 rounded">
-                {isVisible ? 'Hide Address' : 'Show Address'}
-            </button> */}
-
-            <ul className="space-y-4">
-                {addresses.map((addr) => (
-                    <li key={addr.address_id} className="bg-white p-4 shadow rounded flex items-start gap-4">
-                        <input
-                            type="radio"
-                            name="selectedAddress"
-                            checked={selectedAddressId === addr.address_id}
-                            onChange={() => setSelectedAddressId(addr.address_id)}
-                            className="mt-1"
-                        />
-
-                        <div>
-                            <div>{addr.number}, {addr.street}, {addr.city}, {addr.state}, {addr.zipCode}, {addr.country}</div>
-                            <div>{addr.landmark}</div>
-                            {/* <div className="text-sm text-gray-500">Default: {addr.isDefault ? 'Yes' : 'No'}</div> */}
-                        </div>
-                    </li>
-                ))}
-            </ul>
-
+            {/* Checkout Button */}
             <div className="flex justify-end mt-6">
                 <button
                     onClick={checkOutHandler}
                     className="p-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-200"
                 >
-                    Process to pay
+                    Process to Pay
                 </button>
             </div>
-            <ToastContainer position="top-center" autoClose={1500} />
 
+            <ToastContainer position="top-center" autoClose={1500} />
         </div>
+
     );
 }
 
