@@ -98,6 +98,7 @@ function AddressPage() {
 
     const checkOutHandler = () => {
         const token = getCookie("token");
+        // localStorage.setItem("cart_total_amount", totalAmount.toFixed(2)); 
 
         // ❗ Check if user has selected any address
         if (!selectedAddressId) {
@@ -124,8 +125,18 @@ function AddressPage() {
         fetchAddresses();
     }, []);
 
+
+
     return (
         <div className="p-8 bg-gray-50 min-h-screen relative">
+
+            <button
+                onClick={() => navigate(-1)}
+                className="absolute top-4 left-4 py-2 px-4 bg-indigo-500 text-white rounded-lg hover:bg-gray-600 transition duration-200"
+            >
+                &larr;
+            </button>
+
             {/* Back Button */}
             <button
                 onClick={() => navigate(-1)}
@@ -169,7 +180,7 @@ function AddressPage() {
                                     name="selectedAddress"
                                     checked={selectedAddressId === addr.address_id}
                                     onChange={() => setSelectedAddressId(addr.address_id)}
-                                    
+
                                 />
                                 <div>
                                     <div>{addr.number}, {addr.street}, {addr.city}, {addr.state}, {addr.zipCode}, {addr.country}</div>

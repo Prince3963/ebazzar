@@ -29,14 +29,16 @@ function Sidebar() {
         >
           Products
         </Link>
+
         <Link
-          to="/admin/order"
+          to="/admin/orders"
           className={`px-4 py-2 rounded-lg transition duration-200 ${
             isActive('/admin/order') ? 'bg-yellow-500 text-black' : 'hover:bg-yellow-500 hover:text-black'
           }`}
         >
           Orders
         </Link>
+        
         <Link
           to="/admin/customer"
           className={`px-4 py-2 rounded-lg transition duration-200 ${

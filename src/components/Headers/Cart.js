@@ -80,6 +80,12 @@ function Cart() {
     localStorage.setItem('guest_cart', JSON.stringify(updatedItems));
   };
 
+  // Whenever cart updates — save updated total amount to localStorage
+useEffect(() => {
+  localStorage.setItem("cart_total_amount", totalAmount.toFixed(2));
+}, [cartItems, totalAmount]);
+
+
   return (
     <div className="p-8 bg-gray-50 min-h-screen relative">
       <button

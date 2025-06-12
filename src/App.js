@@ -10,7 +10,6 @@ import Dashboard from './components/Admin/Dashboard';
 import LandingPage from './components/User/LandingPage';
 import Customer from './components/Admin/Coustomer/Customer';
 import About from './components/Headers/About';
-import Order from './components/Admin/Order';
 import Register from './components/Authentications/Register';
 import UserDashboard from './components/User/UserDashboard';
 import UserProfile from './components/Headers/UserProfile';
@@ -34,7 +33,8 @@ import 'primereact/resources/primereact.min.css';                  // Core Style
 import 'primeicons/primeicons.css';                                // Icons
 import AddressPage from './components/Headers/AddressPage.js';
 import PaymentButton from './components/User/PaymentButton.js';
-import OrderPage from './components/User/OrderPage.js';
+import Order from './components/User/Order.js';
+import Orders from './components/Admin/Orders.js';
 
 
 function App() {
@@ -85,8 +85,9 @@ function AppContent() {
         <Route path="/admin/sidebar" element={<PublicRoute element={<Sidebar />} />} />
         <Route path="/admin" element={<PublicRoute element={<Dashboard />} />} />
         <Route path="/admin/product" element={<PublicRoute element={<Product />} />} />
-        <Route path="/admin/order" element={<PublicRoute element={<Order />} />} />
+        <Route path="/admin/orders" element={<PublicRoute element={<Orders />} />} />
         <Route path="/admin/customer" element={<PublicRoute element={<Customer />} />} />
+
       </Routes>
       {/* <Navbar /> */}
       {!locationPath.pathname.startsWith('/admin') && <Navbar />}
@@ -96,7 +97,6 @@ function AppContent() {
         {/* Public Pages */}
         <Route path="/" element={<PublicRoute element={<LandingPage />} />} />
         <Route path="/home" element={<PublicRoute element={<Home />} />} />
-        <Route path="/order" element={<PublicRoute element={<Order />} />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/disclaimer" element={<Disclaimer />} />
@@ -120,7 +120,7 @@ function AppContent() {
         <Route path="/profile" element={<PrivateRoute element={<UserProfile />} />} />
         <Route path="/address" element={<PrivateRoute element={<AddressPage />}/>} />
         <Route path="/payment" element={<PrivateRoute element={<PaymentButton />}/>} />
-        <Route path="/order" element={<PrivateRoute element={<OrderPage />}/>} />
+        <Route path="/order" element={<PrivateRoute element={<Order />}/>} />
         <Route path="/product/:id" element={<ProductDetails />} />
 
 
