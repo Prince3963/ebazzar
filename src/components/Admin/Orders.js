@@ -10,7 +10,7 @@ function Orders() {
   useEffect(() => {
     axios.get('https://localhost:7219/api/Order')
       .then(response => {
-        setOrders(response.data);
+        setOrders(response.data.data);
         setLoading(false);
       })
       .catch(error => {
@@ -49,16 +49,17 @@ function Orders() {
                   <td className="px-6 py-3">{order.username ?? 'N/A'}</td>
                   <td className="px-6 py-3">{order.address_id ?? 'N/A'}</td>
                   <td className="px-6 py-3">{order.razorpay_order_id ?? 'N/A'}</td>
-                  <td className="px-6 py-3">₹ {order.total_price?.toFixed(2)}</td>
+                  <td className="px-6 py-3">
+                    ₹{order.total_price ? parseFloat(order.total_price).toFixed(2) : '0.00'}
+                  </td>
                   <td className="px-6 py-3">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        order.status === 'Completed'
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${order.status === 'Completed'
                           ? 'bg-green-100 text-green-800'
                           : order.status === 'Cancelled'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-green-400 text-white'
-                      }`}
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-green-400 text-white'
+                        }`}
                     >
                       {order.status}
                     </span>

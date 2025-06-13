@@ -35,6 +35,8 @@ import AddressPage from './components/Headers/AddressPage.js';
 import PaymentButton from './components/User/PaymentButton.js';
 import Order from './components/User/Order.js';
 import Orders from './components/Admin/Orders.js';
+import SuccessOrder from './components/User/SuccessOrder.js';
+import FailPayment from './components/User/FailPayment.js';
 
 
 function App() {
@@ -120,6 +122,8 @@ function AppContent() {
         <Route path="/profile" element={<PrivateRoute element={<UserProfile />} />} />
         <Route path="/address" element={<PrivateRoute element={<AddressPage />}/>} />
         <Route path="/payment" element={<PrivateRoute element={<PaymentButton />}/>} />
+        <Route path="/successPage" element={<PrivateRoute element={<SuccessOrder />}/>} />
+        <Route path="/failPayment" element={<PrivateRoute element={<FailPayment />}/>} />
         <Route path="/order" element={<PrivateRoute element={<Order />}/>} />
         <Route path="/product/:id" element={<ProductDetails />} />
 

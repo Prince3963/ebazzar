@@ -8,9 +8,6 @@ const getCookie = (name) => {
     return null;
 };
 
-
-
-
 const PaymentButton = () => {
     const [amount, setAmount] = useState('');
     const [username, setUsername] = useState('');
@@ -25,7 +22,6 @@ const PaymentButton = () => {
     }, []);
 
     useEffect(() => {
-        // Example: fetch username from your API with token
         const fetchUser = async () => {
             try {
                 const response = await fetch('https://localhost:7219/api/user/profile', {
@@ -36,34 +32,29 @@ const PaymentButton = () => {
                 if (response.ok) {
                     const userData = await response.json();
                     setUsername(userData.username);
-                } else {
-                    console.log('Failed to fetch user data');
                 }
             } catch (err) {
                 console.error(err);
             }
         };
 
-        fetchUser();
+        if (token) {
+            fetchUser();
+        }
     }, [token]);
-
 
     const createOrderFormData = (razorpay_order_id) => {
         const savedAddressJSON = localStorage.getItem('selectedAddress');
-        const savedAddress = savedAddressJSON ? JSON.parse(savedAddressJSON) : null;
-        const savedAddressId = savedAddress ? savedAddress.address_id : '1';
-
+        const savedAddress = savedAddressJSON ? JSON.parse(savedAddressJSON) : {};
         const formData = new FormData();
         formData.append('username', username);
-        formData.append('address_id', savedAddressId);
+        formData.append('address_id', savedAddress.address_id || '1');
         formData.append('razorpay_order_id', razorpay_order_id);
         formData.append('total_price', amount);
         formData.append('status', 'Confirmed');
         formData.append('createdAt', new Date().toISOString());
-
         return formData;
     };
-
 
     const createOrderOnServer = async () => {
         const response = await fetch('https://localhost:7219/api/payment/create-order', {
@@ -81,7 +72,7 @@ const PaymentButton = () => {
         }
 
         const data = await response.json();
-        return data.orderId;
+        return data.data; // razorpay_order_id
     };
 
     const handlePayment = async () => {
@@ -91,26 +82,87 @@ const PaymentButton = () => {
                 return;
             }
 
-            const orderId = await createOrderOnServer(); // Backend order ID (optional use)
+            const orderId = await createOrderOnServer(); // create Razorpay order
 
             const options = {
                 key: 'rzp_test_PQ2r2RUKU4ACiT',
                 amount: amount * 100,
+                name: 'eBazzar',
+                description: 'Payment to eBazzar',
                 currency: 'INR',
+                order_id: orderId,
                 handler: async function (response) {
-                    const razorpay_order_id = response.razorpay_payment_id;
+                    try {
+                        // Get selected address
+                        const savedAddressJSON = localStorage.getItem('selectedAddress');
+                        const addressObj = savedAddressJSON ? JSON.parse(savedAddressJSON) : {};
 
-                    // ✅ Save order in backend
-                    await fetch('https://localhost:7219/api/order/addOrder', {
-                        method: 'POST',
-                        headers: {
-                            Authorization: 'Bearer ' + token,
-                        },
-                        body: createOrderFormData(razorpay_order_id),
-                    });
+                        // 1. Add Order to backend
+                        const addOrderResponse = await fetch('https://localhost:7219/api/order/addOrder', {
+                            method: 'POST',
+                            headers: {
+                                Authorization: 'Bearer ' + token,
+                            },
+                            body: createOrderFormData(response.razorpay_order_id),
+                        });
 
-                    alert('✅ Payment successful & Order placed!');
-                    navigate('/order-success'); // ya home
+                        if (!addOrderResponse.ok) throw new Error('Failed to add order');
+                        const orderResult = await addOrderResponse.json();
+
+                        const createdOrderId = orderResult.data; // Make sure backend returns actual order_id
+                        if (!createdOrderId) throw new Error("No order_id returned");
+
+                        // 2. Add OrderDetails
+                        const cart = JSON.parse(localStorage.getItem('guest_cart') || '[]');
+
+                        for (const item of cart) {
+                            const orderDetailsDTO = {
+                                product_id: item.productId,
+                                order_id: createdOrderId,
+                                quantity: item.quantity,
+                                final_price: item.product_price * item.quantity,
+                                product_name: item.product_name,
+                                product_image: item.product_imageURL,
+                                razorpay_order_id: response.razorpay_order_id,
+                            };
+
+                            console.log("Sending order detail:", orderDetailsDTO);
+                            // alert("Sending order detail:", orderDetailsDTO);
+
+                            const detailResponse = await fetch('https://localhost:7219/api/test/addOrderDetails', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    Authorization: 'Bearer ' + token,
+                                },
+                                body: JSON.stringify(orderDetailsDTO),
+                            });
+
+                            if (!detailResponse.ok) {
+                                let errorMsg = "Unknown error";
+                                try {
+                                    const errJson = await detailResponse.json();
+                                    errorMsg = errJson.message || JSON.stringify(errJson);
+                                } catch {
+                                    errorMsg = await detailResponse.text(); // fallback to plain text error if JSON parsing fails
+                                }
+                                console.warn("Failed to add order detail:", errorMsg);
+                            }
+
+                        }
+
+                        // 3. Clean up
+                        localStorage.removeItem('cart');
+                        localStorage.removeItem('cart_total_amount');
+                        localStorage.removeItem('selectedAddress');
+
+                        // alert('Payment successful & Order placed!');
+                        navigate('/successPage');
+
+                    } catch (err) {
+                        console.error("Payment handler error:", err);
+                        alert("Something went wrong while processing order: " + err.message);
+                    }
                 },
                 prefill: {
                     name: 'Customer Name',
@@ -125,7 +177,7 @@ const PaymentButton = () => {
                 },
                 modal: {
                     ondismiss: function () {
-                        alert('⚠️ Payment cancelled by user');
+                        navigate('/failPayment');
                     },
                 },
             };
@@ -133,15 +185,12 @@ const PaymentButton = () => {
             const rzp = new window.Razorpay(options);
             rzp.open();
         } catch (error) {
-            console.error('Payment error:', error);
-            alert('⚠️ Payment initialization failed: ' + error.message);
+            navigate('/failPayment');
         }
     };
 
-
     return (
         <div className="relative flex items-center justify-center min-h-screen bg-gray-100">
-
             <button
                 onClick={() => navigate(-1)}
                 className="absolute top-4 left-4 py-2 px-4 bg-indigo-500 text-white rounded-lg hover:bg-gray-600 transition duration-200"
@@ -150,23 +199,17 @@ const PaymentButton = () => {
             </button>
 
             <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md text-center">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-4"></h2>
                 <p className="text-lg text-gray-600">Total Payable Amount:</p>
                 <h1 className="text-4xl font-bold text-indigo-700 my-4">₹{amount}</h1>
                 <button
                     onClick={handlePayment}
                     className="mt-6 px-6 py-3 bg-indigo-600 text-white rounded-lg text-lg hover:bg-blue-600 transition"
                 >
-                    <div className='m-1'>
-                        &nbsp; Pay Now  &nbsp;
-                    </div>
+                    Pay Now
                 </button>
-
-                <h1>✅ Thank you! Your order has been placed successfully.</h1>
             </div>
         </div>
     );
-
 };
 
 export default PaymentButton;

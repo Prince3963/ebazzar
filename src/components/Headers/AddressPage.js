@@ -89,7 +89,13 @@ function AddressPage() {
             );
 
             if (res.data.status) {
-                setAddresses(res.data.data);
+                const reversedAddresses = [...res.data.data].reverse();
+                setAddresses(reversedAddresses);
+
+                // Auto-select the first address (if any)
+                if (reversedAddresses.length > 0) {
+                    setSelectedAddressId(reversedAddresses[0].address_id);
+                }
             }
         } catch (err) {
             console.error("Error fetching addresses:", err);
@@ -120,6 +126,35 @@ function AddressPage() {
             navigate('/login');
         }
     };
+
+    const handleDeleteAddress = async (e, addressId) => {
+        e.stopPropagation(); // Stop the click from selecting the address
+
+        try {
+            const token = getCookie("token");
+
+            if (!window.confirm("Are you sure you want to delete this address?")) return;
+
+            await axios.delete(`https://localhost:7219/api/Address/${addressId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            
+            setAddresses(prev => prev.filter(addr => addr.address_id !== addressId));
+
+            if (selectedAddressId === addressId) {
+                setSelectedAddressId(null);
+            }
+
+            toast.success("Address deleted successfully");
+        } catch (err) {
+            console.error("Error deleting address:", err);
+            toast.error("Failed to delete address");
+        }
+    };
+
 
     useEffect(() => {
         fetchAddresses();
@@ -172,21 +207,40 @@ function AddressPage() {
                 de) */}
                 <div className="md:w-1/2">
                     <h3 className="text-xl font-semibold mb-3">Your Saved Addresses</h3>
+                    <h3 className="text-xl font-semibold mb-3">Backend API</h3>
+
                     <ul className="space-y-4">
                         {[...addresses].reverse().map((addr) => (
-                            <li key={addr.address_id} className="bg-white p-4 shadow rounded flex gap-4">
-                                <input
-                                    type="radio"
-                                    name="selectedAddress"
-                                    checked={selectedAddressId === addr.address_id}
-                                    onChange={() => setSelectedAddressId(addr.address_id)}
-
-                                />
-                                <div>
-                                    <div>{addr.number}, {addr.street}, {addr.city}, {addr.state}, {addr.zipCode}, {addr.country}</div>
-                                    <div>{addr.landmark}, {addr.username}, {addr.mobile}</div>
+                            <li
+                                key={addr.address_id}
+                                className={`bg-white p-4 shadow rounded flex justify-between items-start gap-4 cursor-pointer ${selectedAddressId === addr.address_id ? 'ring-2 ring-indigo-500' : ''
+                                    }`}
+                                onClick={() => setSelectedAddressId(addr.address_id)}
+                            >
+                                <div className="flex gap-4">
+                                    <input
+                                        type="radio"
+                                        name="selectedAddress"
+                                        checked={selectedAddressId === addr.address_id}
+                                        readOnly
+                                    />
+                                    <div>
+                                        <div>{addr.number}, {addr.street}, {addr.city}, {addr.state}, {addr.zipCode}, {addr.country}</div>
+                                        <div>{addr.landmark}, {addr.username}, {addr.mobile}</div>
+                                    </div>
                                 </div>
+
+                                {/* Delete Button */}
+                                <button
+                                    onClick={(e) => handleDeleteAddress(e, addr.address_id)}
+                                    className="text-red-500 hover:text-red-700"
+                                    title="Delete Address"
+                                >
+                                    🗑️
+                                </button>
                             </li>
+
+
                         ))}
                     </ul>
                 </div>
